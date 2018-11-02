@@ -16,10 +16,10 @@ export class AppComponent  implements OnInit {
   ngOnInit() {
     let elems = document.querySelectorAll('.carousel');
     let instances = M.Carousel.init(elems, this.options);
-     elems = document.querySelectorAll('.sidenav');
-     instances = M.Sidenav.init(elems, this.options);
-     elems = document.querySelectorAll('.tabs');
-     instances = M.Tabs.init(elems, this.options);
+    elems = document.querySelectorAll('.sidenav');
+    instances = M.Sidenav.init(elems, this.options);
+    elems = document.querySelectorAll('.tabs');
+    instances = M.Tabs.init(elems, this.options);   
   }
 
 }

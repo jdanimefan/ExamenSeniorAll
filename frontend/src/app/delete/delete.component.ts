@@ -19,6 +19,7 @@ export class DeleteComponent implements OnInit {
   registerForm: FormGroup;
   submitted = false;
   roles;
+  fecha;
   tipos;
   msgbtnactivo : string = 'Eliminar';
   msgiconactivo : string = 'delete';
@@ -45,6 +46,25 @@ export class DeleteComponent implements OnInit {
       msg: 'Su empleado fue dado de baja'
     }
   }
+  classcubrioturno = "hide";
+  options = {
+    i18n: {
+			monthsShort	:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+			months:	['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+			weekdays: ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'],
+			weekdaysShort: ['Dom','Lun','Mar','Mie','Jue','Vie','Sab'],
+			weekdaysAbbrev:	['D','L','M','M','J','V','S'],
+			cancel	:'Cancelar',
+			clear	:'Limpiar',
+			done	:'Aceptar'
+		},
+		format : "yyyy-mm-dd",
+    minDate: new Date(),
+    onSelect: (fecha) => {
+      this.registerForm.value["fecha"] = fecha.getFullYear() + "-" + fecha.getMonth() +"-" + fecha.getDate();
+      console.log(this.registerForm.value["fecha"]);
+    }
+  };
   
 
 
@@ -59,16 +79,20 @@ export class DeleteComponent implements OnInit {
       { type: 'maxlength', message: 'Maximo 50 caracteres' },
       { type: 'pattern', message: 'Tu nombre solo puede contener letras y espacios' }      
     ],
-    'radioroles': [
-      { type: 'required', message: 'El rol es requerido' }
+    'fecha': [
+      { type: 'required', message: 'La fecha es requerida' }
     ],
-    'radiotipos': [
-      { type: 'required', message: 'El tipo es requerido' },
+    'numeroentregas': [
+      { type: 'required', message: 'El numero de entregas es requerido' },
+      { type: 'maxlength', message: 'Maximo 10 digitos' },
+      { type: 'pattern', message: 'El numero de entregas solo puede contener numeros' }
     ]    
     }
   constructor(private router: Router,private appService: Appservice,private formBuilder: FormBuilder) { }
 
   ngOnInit() {
+    let elems = document.querySelectorAll('.datepicker');
+    let instances = M.Datepicker.init(elems, this.options);
     this.cargarempleado();
   }
 
@@ -76,10 +100,30 @@ export class DeleteComponent implements OnInit {
   {
     //this.empleado = JSON.parse(localStorage.getItem("numeroempleado"));    
     this.registerForm = this.formBuilder.group({
-      numeroempleado: [{value: '', disabled: true}, [Validators.required, Validators.pattern(this.numerico), Validators.maxLength(10)]]
-      //nombre: [this.empleado.cnomempl,[ Validators.required, Validators.pattern(this.letras)]],
+      numeroempleado: [{value: '', disabled: false}, [Validators.required, Validators.pattern(this.numerico), Validators.maxLength(10)]],
+      nombre: [{value: 'thbfg',disabled: true},[ Validators.required, Validators.pattern(this.letras)]],
+      rol: [{value: 'qwe',disabled: true},[ Validators.required, Validators.pattern(this.letras)]],
+      tipo: [{value: 'asd',disabled: true},[ Validators.required, Validators.pattern(this.letras)]],
+      fecha: ['',[ Validators.required]],
+      numeroentregas: [{value: 0, disabled: false}, [Validators.required, Validators.pattern(this.numerico), Validators.maxLength(10)]],
+      checkcubrirturno: [{value: false, disabled: false}, [Validators.required ]],
+      checkcubriochofer: [{value: false, disabled: false}, [Validators.required]],
+      diaschofer:[{value: '', disabled: false}, [Validators.pattern(this.numerico), Validators.maxLength(2)]],
+      checkcargador: [{value: false, disabled: false}, [Validators.required]],
+      diascargador: [{value: '', disabled: false}, [Validators.pattern(this.numerico), Validators.maxLength(2)]],
       //radioroles: [this.empleado.irol,[ Validators.required]],
       //radiotipos: [this.empleado.itipo,[ Validators.required]]
+    });
+
+    this.registerForm.valueChanges.subscribe(() => {
+      console.log(this.registerForm.controls['fecha'].value)
+      if(this.registerForm.value["checkcubrirturno"] == true)
+      {
+        this.classcubrioturno = "";
+      }
+      else{
+        this.classcubrioturno = "hide";
+      }
     });
 
     /*if(!this.empleado.istatus)
@@ -92,5 +136,17 @@ export class DeleteComponent implements OnInit {
       this.msgiconactivo  = 'add';
     }    */
   }
+  get f() { return this.registerForm.controls; }
+  onSubmit(){
+    this.submitted = true;
+    console.log(this.registerForm.value)
+    if (this.registerForm.invalid) {
+        return;
+    }     
+    console.log("paso");    
+  }
 
+  cambioFecha(){
+    console.log(this.fecha);
+  }
 }

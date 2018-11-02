@@ -33,45 +33,51 @@
                   <div class="row">
                       <div class="input-field col s12 m12 l12">
                           <i class="material-icons prefix">account_circle</i>
-                          <input  id="nombre" type="text" class="validate">
+                          <input formControlName="nombre" id="nombre" type="text" class="validate">
                           <label for="nombre">Nombre</label>                          
                         </div>
                   </div>
                   <div class="row">
                       <div class="input-field col s12 m6 l6">
                           <i class="material-icons prefix">account_circle</i>
-                          <input  id="rol" type="text" class="validate">
+                          <input formControlName="rol" id="rol" type="text" class="validate">
                           <label for="rol">Rol</label>
                         </div>
                         <div class="input-field col s12 m6 l6">
                             <i class="material-icons prefix">account_circle</i>
-                            <input type="tel" id="tipo" class="validate">
+                            <input formControlName="tipo" type="tel" id="tipo" class="validate">
                             <label for="tipo">Tipo</label>                            
                         </div> 
                   </div>
                   <div class="row">
                       <div class="input-field col s12 m6 l6">
                           <i class="material-icons prefix">account_circle</i>
-                          <input  id="fecha" type="text" class="validate">
+                          <input [(ngModel)]="fecha" (change)="cambioFecha()" formControlName="fecha"  id="fecha" type="text" class="datepicker">                          
                           <label for="fecha">Fecha</label>
+                          <div *ngFor="let validationfecha of account_validation_messages.fecha"  class="messagepading red-text text-darken-2">                          
+                            <div *ngIf="registerForm.get('fecha').hasError(validationfecha.type) && (registerForm.get('fecha').dirty )">{{validationfecha.message}}</div>
+                          </div>
                         </div>                        
                   </div>
                   <div class="row">
                       <div class="input-field col s12 m6 l6">
                           <i class="material-icons prefix">account_circle</i>
-                          <input  id="entregas" type="text" class="validate">
-                          <label for="entregas">Numero de Entregas</label>
+                          <input formControlName="numeroentregas" id="entregas" type="text" class="validate">
+                          <label  for="entregas">Numero de Entregas</label>
+                          <div *ngFor="let validationentrega of account_validation_messages.numeroentregas"  class="messagepading red-text text-darken-2">                          
+                            <div *ngIf="registerForm.get('numeroentregas').hasError(validationentrega.type) && (registerForm.get('numeroentregas').dirty || registerForm.get('numeroentregas').touched )">{{validationentrega.message}}</div>
+                          </div>
                         </div>
                         <div class="input-field col s12 m6 l6"> 
                             <p>
                                 <label>
-                                  <input type="checkbox" />
+                                  <input  formControlName="checkcubrirturno" type="checkbox" />
                                   <span>Cubrio turno?</span>
                                 </label>
                               </p>
                         </div>                        
                   </div>
-                  <div class="row">
+                  <div class="row" [ngClass]="classcubrioturno">
                       <div class="col s12 m12 l12">
                           <div class="panel panel-default">
                               <div class="panel-heading">Turnos Cubiertos</div>
@@ -80,14 +86,14 @@
                                       <div class="input-field col s12 m6 l6">
                                           <p>
                                               <label>
-                                                <input type="checkbox" />
+                                                <input formControlName="checkcubriochofer" type="checkbox" />
                                                 <span>Cubrio Chofer?</span>
                                               </label>
                                             </p>
                                       </div>                                        
                                       <div class="input-field col s12 m6 l6">
                                           <i class="material-icons prefix">account_circle</i>
-                                          <input  id="diaschofer" type="text" class="validate">
+                                          <input formControlName="diaschofer" id="diaschofer" type="text" class="validate">
                                           <label for="diaschofer">Dias Cubiertos</label>
                                         </div>                                       
                                   </div>
@@ -95,14 +101,14 @@
                                       <div class="input-field col s12 m6 l6">
                                           <p>
                                               <label>
-                                                <input type="checkbox" />
+                                                <input formControlName="checkcargador" type="checkbox" />
                                                 <span>Cubrio Cargador?</span>
                                               </label>
                                             </p>
                                       </div>                                        
                                       <div class="input-field col s12 m6 l6">
                                           <i class="material-icons prefix">account_circle</i>
-                                          <input  id="diascargador" type="text" class="validate">
+                                          <input formControlName="diascargador" id="diascargador" type="text" class="validate">
                                           <label for="diascargador">Dias Cubiertos</label>
                                         </div>                                       
                                   </div>
