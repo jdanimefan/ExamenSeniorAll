@@ -4,9 +4,9 @@
         "app_name": "Back-End-Examen-Desarrollo",        
         "node_port": 3000,        
         "database": {
-            "user": "postgres",
-            "host": "localhost",
-            "database": "proyectoexamen",
+            "user": "systiendaprueba",
+            "host": "10.44.65.16",
+            "database": "solicitudes",
             "password": "1234567",
             "port": 5432
         }        

@@ -1,5 +1,8 @@
+<blockquote>
+  <h4>Modificar un Empleado</h4>
+</blockquote>
 <div class="row">
-  <form class="col s12">
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="col s12">
     <div class="row divpad">      
       <div class="col s12 m12 l12">
           <div class="panel panel-default">
@@ -8,19 +11,25 @@
                 <div class="row">
                     <div class="input-field col s12 m6 l6">
                         <i class="material-icons prefix">account_circle</i>
-                        <input id="icon_prefix" [value]="numeroempleado" type="text" class="validate" disabled>
+                        <input  formControlName="numeroempleado" [ngClass]="{ 'invalid': submitted && f.numeroempleado.errors }" id="icon_prefix" type="text" class="validate">
                         <label for="icon_prefix">Numero</label>
+                        <div *ngFor="let validationnumero of account_validation_messages.numeroempleado"  class="messagepading red-text text-darken-2">                          
+                          <div *ngIf="registerForm.get('numeroempleado').hasError(validationnumero.type) && (registerForm.get('numeroempleado').dirty || registerForm.get('numeroempleado').touched)">{{validationnumero.message}}</div>
+                        </div>
                       </div>
                       <div class="input-field col s12 m6 l6">
                           <i class="material-icons prefix">account_circle</i>
-                          <input id="icon_telephone" type="tel" class="validate">
+                          <input  formControlName="nombre" id="icon_telephone" [ngClass]="{ 'invalid': submitted && f.nombre.errors }" type="tel" class="validate">
                           <label for="icon_telephone">Nómbre</label>
-                        </div>                         
+                          <div *ngFor="let validationnombre of account_validation_messages.nombre"  class="messagepading red-text text-darken-2">                          
+                            <div *ngIf="registerForm.get('nombre').hasError(validationnombre.type) && (registerForm.get('nombre').dirty || registerForm.get('nombre').touched)">{{validationnombre.message}}</div>
+                          </div>
+                      </div> 
                 </div>
               </div>
             </div>
-      </div>           
-    </div>
+      </div>
+    </div>      
     <div class="row">
       <div class="col s12 m6 l6">
           <div class="panel panel-default">
@@ -28,33 +37,40 @@
               <div class="panel-body">
                   <p *ngFor="let rol of roles">
                       <label >
-                        <input class="with-gap" [value]="rol.id" name="radioroles" type="radio" checked />
-                        <span> {{rol.rol}} </span>
+                        <input class="with-gap" formControlName="radioroles" [value]="rol.rol" name="radioroles" type="radio" checked />
+                        <span> {{rol.descripcionrol}} </span>
                       </label>
                     </p>
+                    <div *ngFor="let validationrol of account_validation_messages.radioroles"  class="messagepading red-text text-darken-2">                          
+                      <div *ngIf="registerForm.get('radioroles').hasError(validationrol.type) && (registerForm.get('radioroles').dirty || registerForm.get('radioroles').touched)">{{validationrol.message}}</div>
+                    </div>
               </div>
             </div>
-      </div>
+      </div>        
       <div class="col s12 m6 l6">
           <div class="panel panel-default">
               <div class="panel-heading">Tipos</div>
               <div class="panel-body">
                   <p *ngFor="let tipo of tipos">
                       <label >
-                        <input class="with-gap" [value]="tipo.id" name="radiotipos" type="radio" checked />
-                        <span> {{tipo.tipo}} </span>
+                        <input class="with-gap" formControlName="radiotipos" [value]="tipo.tipo" name="radiotipos" type="radio" checked />
+                        <span> {{tipo.descripciontipo}} </span>
                       </label>
                     </p>
+                    <div *ngFor="let validationtipo of account_validation_messages.radiotipos"  class="messagepading red-text text-darken-2">                          
+                      <div *ngIf="registerForm.get('radiotipos').hasError(validationtipo.type) && (registerForm.get('radiotipos').dirty || registerForm.get('radiotipos').touched)">{{validationtipo.message}}</div>
+                    </div>
               </div>
             </div>
       </div>      
-    </div>
+    </div>        
     <div class="row">
       <div class="col s12">
-          <a (click)="desactivar()" class="blue-grey darken-4 waves-effect waves-light btn-large right"><i class="material-icons left">{{msgiconactivo}}</i>{{msgbtnactivo}}</a>        
-          <a class="green lighten-2 waves-effect waves-light btn-large right"><i class="material-icons left">save</i>Modificar</a>
-          <a class="red lighten-2 waves-effect waves-light btn-large right"><i class="material-icons left">replay</i>Regresar</a>
+        <a (click)="desactivar()" [ngClass]="btndeletecolor" class="waves-effect waves-light btn-large right"><i class="material-icons left">{{msgiconactivo}}</i>{{msgbtnactivo}}</a>
+        <button class="green lighten-2 waves-effect waves-light btn-large right" [disabled]="loading"><i class="material-icons left">save</i>Modificar</button>
+        <a class="red lighten-2 waves-effect waves-light btn-large right"><i class="material-icons left">replay</i>Regresar</a>
       </div>
-    </div>
+      
+    </div>  
   </form>
 </div>

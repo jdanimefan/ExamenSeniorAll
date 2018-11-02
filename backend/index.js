@@ -18,8 +18,9 @@ const connectionData = global.gConfig.database;
 // Se usa bodyParser
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
-app.use(function (req, res, next) {
 
+// cabeceros para aceptar origen de acceso
+app.use(function (req, res, next) {
     // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
 
@@ -36,6 +37,9 @@ app.use(function (req, res, next) {
     // Pass to next layer of middleware
     next();
 });
+
+// Variable spara uso de regex test
+alpha = /^[ña-zÑA-Z\s]+$/;  
 //ruta get
 app.get('/', (req, res) => {
     res.json(global.gConfig);
@@ -78,7 +82,7 @@ app.get('/GetEmpleados', function(req, res) {
  });
 
 // Funcion post que registrara a un empleado en la BD
-app.post('/PostEmpleado', function (req, res) {
+app.post('/PostEmpleado', function (req, res) {    
     var numEmpl = req.body.numeroempleado;
     var nom = req.body.nombre;
     var rol = req.body.rol;
@@ -95,22 +99,22 @@ app.post('/PostEmpleado', function (req, res) {
         resp.message = "El numero de empleado no es valido";
         res.json(resp);
     }
-    else if(!validator.isAlpha(nom, ['es-ES'])){
+    else if(!alpha.test(nom)){
         resp.status = -1;
         resp.message = "El nombre del empleado no es valido";
         res.json(resp);
     }
-    else if(!validator.isInt(rol)){
+    else if(!validator.isInt(rol.toString())){
         resp.status = -1;
         resp.message = "El rol no es valido";
         res.json(resp);
     }
-    else if(!validator.isInt(tipo)){
+    else if(!validator.isInt(tipo.toString())){
         resp.status = -1;
         resp.message = "El tipo no es valido";
         res.json(resp);
     }
-    else{
+    else{        
         // si todo es correcto se conectara a la bd y se ejecutara la funcion
         const client = new Client(connectionData)        
         client.connect();
@@ -152,23 +156,24 @@ app.put('/PutEmpleado', function (req, res) {
         message: ""
     };
     
+    console.log("entro put");
     // validando los campos que trae la peticion
-    if(!validator.isInt(numEmpl)){
+    if(!validator.isInt(numEmpl.toString())){
         resp.status = -1;
         resp.message = "El numero de empleado no es valido";
         res.json(resp);
     }
-    else if(!validator.isAlpha(nom, ['es-ES'])){
+    else if(!alpha.test(nom)){
         resp.status = -1;
         resp.message = "El nombre del empleado no es valido";
         res.json(resp);
     }
-    else if(!validator.isInt(rol)){
+    else if(!validator.isInt(rol.toString())){
         resp.status = -1;
         resp.message = "El rol no es valido";
         res.json(resp);
     }
-    else if(!validator.isInt(tipo)){
+    else if(!validator.isInt(tipo.toString())){
         resp.status = -1;
         resp.message = "El tipo no es valido";
         res.json(resp);
@@ -183,7 +188,7 @@ app.put('/PutEmpleado', function (req, res) {
                     resp.status = 1;
                     resp.message = "El empleado: " + nom + " Se modifico correctamente";
                 }
-                else{                    
+                else{
                     resp.status = -1;
                     resp.message = "Ocurrio un error al Modificar al Empleado";                    
                 }
@@ -200,21 +205,20 @@ app.put('/PutEmpleado', function (req, res) {
 });
 
 // Funcion post que eliminara/activara a un empleado en la BD
-app.delete('/DeleteEmpleado', function (req, res) {
+app.post('/DeleteEmpleado', function (req, res) {
     var numEmpl = req.body.numeroempleado;
     var activo = req.body.activo;
     var resp = {
         status: 0,
         message: ""
     };
-
     // validando los campos que trae la peticion
-    if(!validator.isInt(numEmpl)){
+    if(!validator.isInt(numEmpl.toString())){
         resp.status = -1;
         resp.message = "El numero de empleado no es valido";
         res.json(resp);
     }
-    else if(!validator.isBoolean(activo)){
+    else if(!validator.isBoolean(activo.toString())){
         resp.status = -1;
         resp.message = "El campo activo no es un boleano";
         res.json(resp);
@@ -262,7 +266,7 @@ app.post('/GetPagos', function(req, res) {
     var numEmpl = req.body.numeroempleado;
     var desde = req.body.fechadesde;
     var hasta = req.body.fechahasta;
-    const client = new Client(connectionData)        
+    const client = new Client(connectionData)
         client.connect();
         client.query("SELECT * FROM fnGetPagosByFecha("+numEmpl+", '"+desde+"', '"+hasta+"')")
             .then(response => {
@@ -346,5 +350,5 @@ app.get('/GetTipos', function(req, res) {
                 resp.message = "Ocurrio un error al consultar los tipos de empleado";                
                 client.end()                
                 res.json(resp);
-            }); 
+        });
  });

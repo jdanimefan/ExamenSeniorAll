@@ -1,3 +1,127 @@
-<p>
-  delete works!
-</p>
+<blockquote>
+  <h4>Pagos Mensuales</h4>
+</blockquote>
+<div class="row">
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="col s12">
+    <div class="row divpad">      
+      <div class="col s12 m12 l12">
+          <div class="panel panel-default">
+              <div class="panel-heading">Buscar Empleado</div>
+              <div class="panel-body">
+                <div class="row">
+                    <div class="input-field col s12 m6 l6">
+                        <i class="material-icons prefix">account_circle</i>
+                        <input  formControlName="numeroempleado" [ngClass]="{ 'invalid': submitted && f.numeroempleado.errors }" id="numero" type="text" class="validate">
+                        <label for="numero">Numero</label>
+                        <div *ngFor="let validationnumero of account_validation_messages.numeroempleado"  class="messagepading red-text text-darken-2">                          
+                          <div *ngIf="registerForm.get('numeroempleado').hasError(validationnumero.type) && (registerForm.get('numeroempleado').dirty || registerForm.get('numeroempleado').touched)">{{validationnumero.message}}</div>
+                        </div>
+                    </div>
+                    <div class="col s12 m6 l6">
+                      <button class="green lighten-2 waves-effect waves-light btn-large right" [disabled]="loading"><i class="material-icons left">search</i>Buscar</button>
+                    </div>
+                </div>
+              </div>
+            </div>
+      </div>
+    </div>      
+    <div class="row">
+      <div class="col s12 m12 l12">
+          <div class="panel panel-default">
+              <div class="panel-heading">Pago Mensual</div>
+              <div class="panel-body">
+                  <div class="row">
+                      <div class="input-field col s12 m12 l12">
+                          <i class="material-icons prefix">account_circle</i>
+                          <input  id="nombre" type="text" class="validate">
+                          <label for="nombre">Nombre</label>                          
+                        </div>
+                  </div>
+                  <div class="row">
+                      <div class="input-field col s12 m6 l6">
+                          <i class="material-icons prefix">account_circle</i>
+                          <input  id="rol" type="text" class="validate">
+                          <label for="rol">Rol</label>
+                        </div>
+                        <div class="input-field col s12 m6 l6">
+                            <i class="material-icons prefix">account_circle</i>
+                            <input type="tel" id="tipo" class="validate">
+                            <label for="tipo">Tipo</label>                            
+                        </div> 
+                  </div>
+                  <div class="row">
+                      <div class="input-field col s12 m6 l6">
+                          <i class="material-icons prefix">account_circle</i>
+                          <input  id="fecha" type="text" class="validate">
+                          <label for="fecha">Fecha</label>
+                        </div>                        
+                  </div>
+                  <div class="row">
+                      <div class="input-field col s12 m6 l6">
+                          <i class="material-icons prefix">account_circle</i>
+                          <input  id="entregas" type="text" class="validate">
+                          <label for="entregas">Numero de Entregas</label>
+                        </div>
+                        <div class="input-field col s12 m6 l6"> 
+                            <p>
+                                <label>
+                                  <input type="checkbox" />
+                                  <span>Cubrio turno?</span>
+                                </label>
+                              </p>
+                        </div>                        
+                  </div>
+                  <div class="row">
+                      <div class="col s12 m12 l12">
+                          <div class="panel panel-default">
+                              <div class="panel-heading">Turnos Cubiertos</div>
+                              <div class="panel-body">
+                                  <div class="row">
+                                      <div class="input-field col s12 m6 l6">
+                                          <p>
+                                              <label>
+                                                <input type="checkbox" />
+                                                <span>Cubrio Chofer?</span>
+                                              </label>
+                                            </p>
+                                      </div>                                        
+                                      <div class="input-field col s12 m6 l6">
+                                          <i class="material-icons prefix">account_circle</i>
+                                          <input  id="diaschofer" type="text" class="validate">
+                                          <label for="diaschofer">Dias Cubiertos</label>
+                                        </div>                                       
+                                  </div>
+                                  <div class="row">
+                                      <div class="input-field col s12 m6 l6">
+                                          <p>
+                                              <label>
+                                                <input type="checkbox" />
+                                                <span>Cubrio Cargador?</span>
+                                              </label>
+                                            </p>
+                                      </div>                                        
+                                      <div class="input-field col s12 m6 l6">
+                                          <i class="material-icons prefix">account_circle</i>
+                                          <input  id="diascargador" type="text" class="validate">
+                                          <label for="diascargador">Dias Cubiertos</label>
+                                        </div>                                       
+                                  </div>
+                              </div>
+                            </div>
+                      </div>        
+                  </div>
+              </div>
+            </div>
+      </div>        
+      <div class="col s12 m6 l6">
+      </div>      
+    </div>        
+    <div class="row">
+      <div class="col s12">        
+        <button class="green lighten-2 waves-effect waves-light btn-large right" [disabled]="loading"><i class="material-icons left">save</i>Modificar</button>
+        <a class="red lighten-2 waves-effect waves-light btn-large right"><i class="material-icons left">replay</i>Regresar</a>
+      </div>
+      
+    </div>  
+  </form>
+</div>
