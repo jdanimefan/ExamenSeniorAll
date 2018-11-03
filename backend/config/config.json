@@ -14,7 +14,7 @@
     "production": {
         "config_id": "production",
         "app_name": "Back-End-Examen-Produccion",
-        "node_port": 8080,
+        "node_port": 3000,
         "database": {
             "user": "postgres",
             "host": "localhost",

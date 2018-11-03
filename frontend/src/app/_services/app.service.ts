@@ -32,6 +32,11 @@ export class Appservice {
         return this.http.get<empleado>("http://localhost:3000/GetEmpleados");
     }
 
+    getEmpleado(numero){
+        return this.http.post<empleado>("http://localhost:3000/GetEmpleado",{
+            numeroempleado: numero
+        });
+    }
     
     guardarEmpleado(numero: string, nombre: string, rol: string, tipo: string): Observable<any> {  
 

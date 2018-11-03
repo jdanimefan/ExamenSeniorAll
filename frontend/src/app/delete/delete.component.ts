@@ -17,6 +17,7 @@ export class DeleteComponent implements OnInit {
     buttonsStyling: false,
   })
   registerForm: FormGroup;
+  searchForm: FormGroup;
   submitted = false;
   roles;
   fecha;
@@ -47,6 +48,7 @@ export class DeleteComponent implements OnInit {
     }
   }
   classcubrioturno = "hide";
+  classpagomensual = "hide";
   options = {
     i18n: {
 			monthsShort	:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
@@ -61,8 +63,16 @@ export class DeleteComponent implements OnInit {
 		format : "yyyy-mm-dd",
     minDate: new Date(),
     onSelect: (fecha) => {
-      this.registerForm.value["fecha"] = fecha.getFullYear() + "-" + fecha.getMonth() +"-" + fecha.getDate();
-      console.log(this.registerForm.value["fecha"]);
+      let fechacompleta;
+
+      if(fecha.getDate() < 10)
+      this.registerForm.value["fecha"] = fecha.getFullYear() + "-" + (fecha.getMonth()+1) +"-0" + fecha.getDate();
+      else
+      fechacompleta = fecha.getFullYear() + "-" + (fecha.getMonth()+1) +"-" + fecha.getDate();
+
+      // remuevo y agrego fecha para que tome correctamente el valor de fecha en el reactive form
+      this.registerForm.removeControl('fecha');
+      this.registerForm.addControl('fecha', new FormControl(fechacompleta, [Validators.required]));
     }
   };
   
@@ -94,38 +104,29 @@ export class DeleteComponent implements OnInit {
     let elems = document.querySelectorAll('.datepicker');
     let instances = M.Datepicker.init(elems, this.options);
     this.cargarempleado();
+    setTimeout(() => {
+      M.updateTextFields();
+    },1)
   }
 
   cargarempleado()
-  {
-    //this.empleado = JSON.parse(localStorage.getItem("numeroempleado"));    
-    this.registerForm = this.formBuilder.group({
-      numeroempleado: [{value: '', disabled: false}, [Validators.required, Validators.pattern(this.numerico), Validators.maxLength(10)]],
-      nombre: [{value: 'thbfg',disabled: true},[ Validators.required, Validators.pattern(this.letras)]],
-      rol: [{value: 'qwe',disabled: true},[ Validators.required, Validators.pattern(this.letras)]],
-      tipo: [{value: 'asd',disabled: true},[ Validators.required, Validators.pattern(this.letras)]],
+  {        
+    this.searchForm = this.formBuilder.group({
+      numeroempleado: [{value: '', disabled: false}, [Validators.required, Validators.pattern(this.numerico), Validators.maxLength(10)]]     
+    });
+
+    this.registerForm = this.formBuilder.group({      
+      nombre: [{value: '',disabled: true},[ Validators.required, Validators.pattern(this.letras)]],
+      rol: [{value: '',disabled: true},[ Validators.required, Validators.pattern(this.letras)]],
+      tipo: [{value: '',disabled: true},[ Validators.required, Validators.pattern(this.letras)]],
       fecha: ['',[ Validators.required]],
       numeroentregas: [{value: 0, disabled: false}, [Validators.required, Validators.pattern(this.numerico), Validators.maxLength(10)]],
       checkcubrirturno: [{value: false, disabled: false}, [Validators.required ]],
       checkcubriochofer: [{value: false, disabled: false}, [Validators.required]],
-      diaschofer:[{value: '', disabled: false}, [Validators.pattern(this.numerico), Validators.maxLength(2)]],
+      diaschofer:[{value: 0, disabled: false}, [Validators.pattern(this.numerico), Validators.maxLength(2)]],
       checkcargador: [{value: false, disabled: false}, [Validators.required]],
-      diascargador: [{value: '', disabled: false}, [Validators.pattern(this.numerico), Validators.maxLength(2)]],
-      //radioroles: [this.empleado.irol,[ Validators.required]],
-      //radiotipos: [this.empleado.itipo,[ Validators.required]]
-    });
-
-    this.registerForm.valueChanges.subscribe(() => {
-      console.log(this.registerForm.controls['fecha'].value)
-      if(this.registerForm.value["checkcubrirturno"] == true)
-      {
-        this.classcubrioturno = "";
-      }
-      else{
-        this.classcubrioturno = "hide";
-      }
-    });
-
+      diascargador: [{value: 0, disabled: false}, [Validators.pattern(this.numerico), Validators.maxLength(2)]],      
+    });    
     /*if(!this.empleado.istatus)
     {
       this.msgDelete.accept.msgtitle = "Activado";
@@ -136,17 +137,80 @@ export class DeleteComponent implements OnInit {
       this.msgiconactivo  = 'add';
     }    */
   }
+  get s() { return this.searchForm.controls; }
   get f() { return this.registerForm.controls; }
+  
   onSubmit(){
     this.submitted = true;
     console.log(this.registerForm.value)
-    if (this.registerForm.invalid) {
+    console.log(this.registerForm.value['checkcubrirturno']);
+    if(this.registerForm.value['checkcubrirturno'] == true){
+      console.log('entro check');
+      if (this.registerForm.invalid) {
+        console.log(123)      
+          return;
+      }
+    }
+    else{
+      if(!this.registerForm.get('fecha').valid || !this.registerForm.get('numeroentregas').valid || !this.registerForm.get('checkcubrirturno').valid){
         return;
-    }     
+      }
+    }    
+    
     console.log("paso");    
   }
 
-  cambioFecha(){
-    console.log(this.fecha);
+  buscarEmpleado(){    
+    if (this.searchForm.invalid) {
+        return;
+    }
+    this.appService.getEmpleado(this.searchForm.value["numeroempleado"])
+    .subscribe(
+      data => {
+        if(data.status == 1){
+          this.registerForm = this.formBuilder.group({      
+            nombre: [{value: data.response[0].cnomempl,disabled: true},[ Validators.required, Validators.pattern(this.letras)]],
+            rol: [{value: data.response[0].sdescrol,disabled: true},[ Validators.required, Validators.pattern(this.letras)]],
+            tipo: [{value: data.response[0].sdesctipo,disabled: true},[ Validators.required, Validators.pattern(this.letras)]],
+            fecha: ['',[ Validators.required]],
+            numeroentregas: [{value: 0, disabled: false}, [Validators.required, Validators.pattern(this.numerico), Validators.maxLength(10)]],
+            checkcubrirturno: [{value: false, disabled: false}, [Validators.required ]],
+            checkcubriochofer: [{value: false, disabled: false}, [Validators.required]],
+            diaschofer:[{value: 0, disabled: false}, [Validators.pattern(this.numerico), Validators.maxLength(2)]],
+            checkcargador: [{value: false, disabled: false}, [Validators.required]],
+            diascargador: [{value: 0, disabled: false}, [Validators.pattern(this.numerico), Validators.maxLength(2)]],
+          });
+          this.classpagomensual = "";
+          setTimeout(() => {
+            M.updateTextFields();
+          },1)
+          this.subscribirvalor();
+        }
+        else{
+          this.swalWithBootstrapButtons(
+            "Error",
+            data.message,
+            'error'
+          )
+        }
+      },
+      error => {
+        this.swalWithBootstrapButtons(
+          "Error",
+          error,
+          'error'
+        )
+      }
+    )
+
+  }
+
+  subscribirvalor(){
+    this.registerForm.get('checkcubrirturno').valueChanges.subscribe(val => {
+      if(this.registerForm.value["checkcubrirturno"] == false)
+        this.classcubrioturno = "";
+      else
+        this.classcubrioturno = "hide";
+    });
   }
 }

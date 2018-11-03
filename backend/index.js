@@ -7,7 +7,7 @@ const _ = require('lodash');
 const app = express();
 
 // Preparando tipo de entorno
-process.env.NODE_ENV = 'development';
+process.env.NODE_ENV = 'production';
 
 // config variables
 const config = require('./config/config.js');
@@ -59,7 +59,7 @@ app.get('/GetEmpleados', function(req, res) {
     };
     const client = new Client(connectionData)        
         client.connect();
-        client.query("SELECT * FROM fngetempleados()")
+        client.query("SELECT * FROM fngetempleados(0)")
             .then(response => {
                 if(_.isEmpty(response.rows))
                 {
@@ -79,6 +79,45 @@ app.get('/GetEmpleados', function(req, res) {
                 client.end()                
                 res.json(resp);
             }); 
+ });
+
+ // funcion que obtiene un numero de empleado en especifico
+ app.post('/GetEmpleado', function(req, res) {
+    var numEmpl = req.body.numeroempleado;    
+    var resp = {
+        status: 0,
+        message: "",
+        response: ""
+    };
+    if(!validator.isInt(numEmpl)){
+        resp.status = -1;
+        resp.message = "El numero de empleado no es valido";
+        res.json(resp);
+    }
+    else{
+        const client = new Client(connectionData)        
+        client.connect();
+        client.query("SELECT * FROM fngetempleados("+numEmpl+")")
+            .then(response => {
+                if(_.isEmpty(response.rows))
+                {
+                    resp.status = -1;
+                    resp.message = "No se encontro ningun empleado";
+                    res.json(resp);
+                }
+                resp.status = 1;
+                resp.message = "Se encontro al empleado";
+                resp.response = response.rows;                
+                client.end()
+                res.json(resp);
+            })
+            .catch(err => {                
+                resp.status = -2;
+                resp.message = "Ocurrio un error al consultar a los empleados";                
+                client.end()                
+                res.json(resp);
+            }); 
+    }
  });
 
 // Funcion post que registrara a un empleado en la BD
