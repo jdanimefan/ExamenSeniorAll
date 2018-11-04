@@ -57,7 +57,8 @@ app.get('/GetEmpleados', function(req, res) {
         message: "",
         response: ""
     };
-    const client = new Client(connectionData)        
+    const client = new Client(connectionData);
+    res.status(200);
         client.connect();
         client.query("SELECT * FROM fngetempleados(0)")
             .then(response => {
@@ -70,19 +71,20 @@ app.get('/GetEmpleados', function(req, res) {
                 resp.status = 1;
                 resp.message = "Se encontraron empleados";
                 resp.response = response.rows;
-                client.end()
+                client.end();
                 res.json(resp);
             })
             .catch(err => {                
                 resp.status = -2;
                 resp.message = "Ocurrio un error al consultar a los empleados";                
-                client.end()                
+                client.end();
+                res.status(409);
                 res.json(resp);
             }); 
  });
 
  // funcion que obtiene un numero de empleado en especifico
- app.post('/GetEmpleado', function(req, res) {
+ app.post('/GetEmpleado', function(req, res) {     
     var numEmpl = req.body.numeroempleado;    
     var resp = {
         status: 0,
@@ -95,12 +97,12 @@ app.get('/GetEmpleados', function(req, res) {
         res.json(resp);
     }
     else{
-        const client = new Client(connectionData)        
+        const client = new Client(connectionData);
         client.connect();
+        res.status(200);
         client.query("SELECT * FROM fngetempleados("+numEmpl+")")
             .then(response => {
-                if(_.isEmpty(response.rows))
-                {
+                if(_.isEmpty(response.rows)){
                     resp.status = -1;
                     resp.message = "No se encontro ningun empleado";
                     res.json(resp);
@@ -108,13 +110,14 @@ app.get('/GetEmpleados', function(req, res) {
                 resp.status = 1;
                 resp.message = "Se encontro al empleado";
                 resp.response = response.rows;                
-                client.end()
+                client.end();
                 res.json(resp);
             })
             .catch(err => {                
                 resp.status = -2;
                 resp.message = "Ocurrio un error al consultar a los empleados";                
-                client.end()                
+                client.end();
+                res.status(409);
                 res.json(resp);
             }); 
     }
@@ -155,7 +158,8 @@ app.post('/PostEmpleado', function (req, res) {
     }
     else{        
         // si todo es correcto se conectara a la bd y se ejecutara la funcion
-        const client = new Client(connectionData)        
+        res.status(200);
+        const client = new Client(connectionData);
         client.connect();
         client.query("SELECT fnregistrarempleado FROM fnRegistrarEmpleado(" + numEmpl + ",'" + nom + "'," + rol + "," + tipo +")")
             .then(response => {
@@ -171,13 +175,14 @@ app.post('/PostEmpleado', function (req, res) {
                     resp.status = -1;
                     resp.message = "Ocurrio un error al Registrar al Empleado";                    
                 }
-                client.end()
+                client.end();
                 res.json(resp);
             })
             .catch(err => {                
                 resp.status = -2;
                 resp.message = "Ocurrio un error al Registrar al empleado";                
-                client.end()
+                client.end();
+                res.status(409);
                 res.json(resp);
             });    
     }   
@@ -188,14 +193,13 @@ app.put('/PutEmpleado', function (req, res) {
     var numEmpl = req.body.numeroempleado;
     var nom = req.body.nombre;
     var rol = req.body.rol;
-    var tipo = req.body.tipo
+    var tipo = req.body.tipo;
 
     var resp = {
         status: 0,
         message: ""
     };
-    
-    console.log("entro put");
+        
     // validando los campos que trae la peticion
     if(!validator.isInt(numEmpl.toString())){
         resp.status = -1;
@@ -219,7 +223,8 @@ app.put('/PutEmpleado', function (req, res) {
     }
     else{
         // si todo es correcto se conectara a la bd y se ejecutara la funcion
-        const client = new Client(connectionData)        
+        res.status(200);
+        const client = new Client(connectionData);
         client.connect();        
         client.query("SELECT fnmodificarempleado FROM fnModificarEmpleado(" + numEmpl + ",'" + nom + "'," + rol + "," + tipo +")")
             .then(response => {
@@ -231,13 +236,14 @@ app.put('/PutEmpleado', function (req, res) {
                     resp.status = -1;
                     resp.message = "Ocurrio un error al Modificar al Empleado";                    
                 }
-                client.end()
+                client.end();
                 res.json(resp);
             })
             .catch(err => {                
                 resp.status = -2;
                 resp.message = "Ocurrio un error al Modificar el empleado";                
-                client.end()
+                client.end();
+                res.status(409);
                 res.json(resp);
             });    
     }
@@ -264,7 +270,8 @@ app.post('/DeleteEmpleado', function (req, res) {
     }
     else{
         // si todo es correcto se conectara a la bd y se ejecutara la funcion
-        const client = new Client(connectionData)        
+        res.status(200);
+        const client = new Client(connectionData);
         client.connect();        
         client.query("SELECT fneliminar_activarempleado FROM fnEliminar_ActivarEmpleado(" + numEmpl + ","+  activo +")")
             .then(response => {                
@@ -282,13 +289,14 @@ app.post('/DeleteEmpleado', function (req, res) {
                     else
                         resp.message = "Ocurrio un error al Eliminar al Empleado";
                 }
-                client.end()
+                client.end();
                 res.json(resp);
             })
             .catch(err => {
                 resp.status = -2;
                 resp.message = "Ocurrio un error al Eliminar al empleado";                
-                client.end()
+                client.end();
+                res.status(409);
                 res.json(resp);
             });    
     }
@@ -305,7 +313,8 @@ app.post('/GetPagos', function(req, res) {
     var numEmpl = req.body.numeroempleado;
     var desde = req.body.fechadesde;
     var hasta = req.body.fechahasta;
-    const client = new Client(connectionData)
+    res.status(200);
+    const client = new Client(connectionData);
         client.connect();
         client.query("SELECT * FROM fnGetPagosByFecha("+numEmpl+", '"+desde+"', '"+hasta+"')")
             .then(response => {
@@ -319,13 +328,14 @@ app.post('/GetPagos', function(req, res) {
                 resp.status = 1;
                 resp.message = "Se encontraron pagos";
                 resp.response = response.rows;
-                client.end()
+                client.end();
                 res.json(resp);
             })
             .catch(err => {                
                 resp.status = -2;
                 resp.message = "Ocurrio un error al consultar a los pagos";                
-                client.end()                
+                client.end();
+                res.status(409);
                 res.json(resp);
             }); 
  });
@@ -337,7 +347,8 @@ app.get('/GetRoles', function(req, res) {
         message: "",
         response: ""
     };
-    const client = new Client(connectionData)        
+    res.status(200);
+    const client = new Client(connectionData);
         client.connect();
         client.query("SELECT rol, descripcionrol FROM rol")
             .then(response => {
@@ -350,13 +361,14 @@ app.get('/GetRoles', function(req, res) {
                 resp.status = 1;
                 resp.message = "Se encontraron roles de empleado";
                 resp.response = response.rows;
-                client.end()
+                client.end();
                 res.json(resp);
             })
             .catch(err => {                
                 resp.status = -2;
                 resp.message = "Ocurrio un error al consultar los roles de empleado";                
-                client.end()                
+                client.end();
+                res.status(409);
                 res.json(resp);
             }); 
  });
@@ -368,7 +380,8 @@ app.get('/GetTipos', function(req, res) {
         message: "",
         response: ""
     };
-    const client = new Client(connectionData)        
+    res.status(200);
+    const client = new Client(connectionData);
         client.connect();
         client.query("SELECT tipo, descripciontipo FROM tipo")
             .then(response => {
@@ -381,13 +394,160 @@ app.get('/GetTipos', function(req, res) {
                 resp.status = 1;
                 resp.message = "Se encontraron tipos de empleado";
                 resp.response = response.rows;
-                client.end()
+                client.end();
                 res.json(resp);
             })
             .catch(err => {                
                 resp.status = -2;
                 resp.message = "Ocurrio un error al consultar los tipos de empleado";                
-                client.end()                
+                client.end();
+                res.status(409);
                 res.json(resp);
         });
+ });
+
+ // Funcion post que modificara a un empleado en la BD
+app.post('/PostPagosMensuales', function (req, res) {
+    var numEmpl = req.body.numeroempleado;
+    var fecha = req.body.fecha;
+    var cubrio = req.body.checkcubrio;
+    var cchofer = req.body.checkchofer;
+    var ccargador = req.body.checkcargador;
+    var diaschof = req.body.diaschofer;
+    var diascarg = req.body.diascargador;
+    var entrega = req.body.numeroentregas;
+    var dfalto = req.body.diasfalto;
+
+    var resp = {
+        status: 0,
+        message: ""
+    }; 
+    // validando los campos que trae la peticion
+    if(!validator.isInt(numEmpl.toString())){
+        resp.status = -1;
+        resp.message = "El numero de empleado no es valido";
+        res.json(resp);
+    }
+    else if(Date.parse(fecha) === NaN){
+        resp.status = -1;
+        resp.message = "El fecha no es valida";
+        res.json(resp);
+    }
+    else if(!validator.isBoolean(cubrio.toString())){
+        resp.status = -1;
+        resp.message = "El campo check cubrio turno no es un boleano";
+        res.json(resp);
+    }
+    else if(!validator.isBoolean(cchofer.toString())){
+        resp.status = -1;
+        resp.message = "El campo check chofer no es un boleano";
+        res.json(resp);
+    }
+    else if(!validator.isBoolean(ccargador.toString())){
+        resp.status = -1;
+        resp.message = "El campo check cargador no es un boleano";
+        res.json(resp);
+    }
+    else if(!validator.isInt(diaschof.toString())){
+        resp.status = -1;
+        resp.message = "Los dias del cargador no es un numero";
+        res.json(resp);
+    }
+    else if(!validator.isInt(diascarg.toString())){
+        resp.status = -1;
+        resp.message = "Los dias del choferno no es un numero";
+        res.json(resp);
+    }
+    else if(!validator.isInt(entrega.toString())){
+        resp.status = -1;
+        resp.message = "El numero de entregas no es un numero";
+        res.json(resp);
+    }
+    else if(!validator.isInt(dfalto.toString())){
+        resp.status = -1;
+        resp.message = "Los dias que falto no es un numero";
+        res.json(resp);
+    }
+    else{       
+       // si todo es correcto se conectara a la bd y se ejecutara la funcion
+        const client = new Client(connectionData);
+        var cchofernum = 0;
+        var ccargadornum = 0;
+        client.connect();
+        if(ccargador == true )
+        ccargadornum = 1
+        if(cchofer == true )
+        cchofernum = 1
+        res.status(200);
+        client.query("SELECT * FROM obtenermonto(" + numEmpl + ",'" + cchofernum + 
+        "','" + diaschof + "','" + ccargadornum + "','" + diascarg+ "','" + entrega+ "','" + dfalto+ "','" + fecha  +"')")
+            .then(response => {
+                resp.status = 1;
+                resp.message = " Se le realizar el pago mensual correctamente al empleado:" + numEmpl;
+                resp.response = response.rows;
+                console.log(resp.response);
+                client.end();
+                res.json(resp);
+            })
+            .catch(err => {                
+                resp.status = -2;
+                resp.message = "Ocurrio un error al realizar el pago mensual";                
+                client.end();
+                res.status(409);
+                res.json(resp);
+            });
+    }
+});
+
+ // funcion que obtiene el reporte de pagos mensuales de una cierta fecha
+ app.post('/GetReporte', function(req, res) {     
+    var numEmpl = req.body.numeroempleado;
+    var fdesde = req.body.fechadesde;
+    var fhasta = req.body.fechahasta;
+    var resp = {
+        status: 0,
+        message: "",
+        response: ""
+    };
+    if(!validator.isInt(numEmpl)){
+        resp.status = -1;
+        resp.message = "El numero de empleado no es valido";
+        res.json(resp);
+    }
+    else if(Date.parse(fdesde) === NaN){
+        resp.status = -1;
+        resp.message = "El fecha desde no es valida";
+        res.json(resp);
+    }
+    else if(Date.parse(fhasta) === NaN){
+        resp.status = -1;
+        resp.message = "El fecha hasta no es valida";
+        res.json(resp);
+    }
+    else{
+        const client = new Client(connectionData);
+        client.connect();
+        res.status(200);
+        console.log("SELECT * FROM fnGetPagosByFecha("+numEmpl+ ",'" + fdesde + "','" + fdesde + "')");
+        client.query("SELECT * FROM fngetempleados("+numEmpl+")")
+            .then(response => {
+                if(_.isEmpty(response.rows)){
+                    resp.status = -1;
+                    resp.message = "No se encontro ningun reporte desde " + fdesde + " / hasta " + fhasta;
+                    res.json(resp);
+                }
+                resp.status = 1;
+                resp.message = "Se encontro el reporte";
+                resp.response = response.rows;                
+                client.end();
+                res.json(resp);
+            })
+            .catch(err => {                
+                resp.status = -2;
+                resp.message = "Ocurrio un error al consultar el reporte";                
+                client.end();
+                res.status(409);
+                res.json(resp);
+            }); 
+    }
  });

@@ -1,0 +1,11 @@
+.divprinci{    
+    background: #ffffff;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+.material-icons.greenicon { color: #0e7d22; }
+
+.material-icons.redicon { color: #ffa1a1; }

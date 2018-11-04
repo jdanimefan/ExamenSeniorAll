@@ -69,7 +69,11 @@ export class UpdateComponent implements OnInit {
 
   constructor(private router: Router,private appService: Appservice,private formBuilder: FormBuilder) { }
 
-  ngOnInit() {    
+  ngOnInit() {
+    if(!localStorage.getItem('numeroempleado'))
+    {
+      this.router.navigate(['/search']);
+    }
     this.cargarTipos();
     this.cargarempleado();
     setTimeout(() => {
@@ -234,6 +238,10 @@ export class UpdateComponent implements OnInit {
         )
       }
     );
+}
+
+back(){    
+  this.router.navigate(['/search']);
 }
 
 }

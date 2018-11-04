@@ -1,0 +1,45 @@
+<blockquote>
+  <h4>Pagos Mensuales</h4>
+</blockquote>
+<div class="row">
+    <form [formGroup]="searchForm" (ngSubmit)="buscarReporte()" class="col s12">
+      <div class="row">      
+        <div class="col s12 m12 l12">
+            <div class="panel panel-default">
+                <div class="panel-heading">Buscar Empleado</div>
+                <div class="panel-body">
+                  <div class="row">
+                      <div class="input-field col s12 m3 l3">
+                          <i class="material-icons prefix">account_circle</i>
+                          <input  formControlName="numeroempleado" [ngClass]="{ 'invalid': submitted && s.numeroempleado.errors }" id="numero" type="text" class="validate">
+                          <label for="numero">Numero</label>
+                          <div *ngFor="let validationnumero of account_validation_messages.numeroempleado"  class="messagepading red-text text-darken-2">                          
+                            <div *ngIf="searchForm.get('numeroempleado').hasError(validationnumero.type) && (searchForm.get('numeroempleado').dirty || searchForm.get('numeroempleado').touched)">{{validationnumero.message}}</div>
+                          </div>
+                      </div>
+                      <div class="input-field col s12 m3 l3">
+                        <i class="material-icons prefix">account_circle</i>
+                        <input  formControlName="fechadesde" [ngClass]="{ 'invalid': submitted && s.fechadesde.errors }" id="fechadesde" type="text" class="datepicker">                          
+                        <label for="fechadesde">Fecha</label>
+                        <div *ngFor="let validationfechadesde of account_validation_messages.fechadesde"  class="messagepading red-text text-darken-2">                          
+                          <div *ngIf="searchForm.get('fechadesde').hasError(validationfechadesde.type) && (searchForm.get('fechadesde').dirty )">{{validationfechadesde.message}}</div>
+                        </div>
+                      </div> 
+                      <div class="input-field col s12 m3 l3">
+                        <i class="material-icons prefix">account_circle</i>
+                        <input  formControlName="fechahasta" [ngClass]="{ 'invalid': submitted && s.fechahasta.errors }" id="fechahasta" type="text" class="datepicker">                          
+                        <label for="fechahasta">Fecha</label>
+                        <div *ngFor="let validationfechahasta of account_validation_messages.fechahasta"  class="messagepading red-text text-darken-2">                          
+                          <div *ngIf="searchForm.get('fechahasta').hasError(validationfechahasta.type) && (searchForm.get('fechahasta').dirty )">{{validationfechahasta.message}}</div>
+                        </div>
+                      </div> 
+                      <div class="col s12 m3 l3">
+                        <button class="green lighten-2 waves-effect waves-light btn-large right" [disabled]="loading"><i class="material-icons left">search</i>Buscar</button>
+                      </div>
+                  </div>
+                </div>
+              </div>
+        </div>
+      </div>
+</form>
+</div>

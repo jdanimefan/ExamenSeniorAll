@@ -11,8 +11,7 @@ export class AppComponent  implements OnInit {
   options = {
 
   };
-
-  objeto = ['touma', 'othinus', 'misaka', 'index', 'accelerator'];
+  
   ngOnInit() {
     let elems = document.querySelectorAll('.carousel');
     let instances = M.Carousel.init(elems, this.options);

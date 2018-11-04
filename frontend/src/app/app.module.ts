@@ -9,11 +9,13 @@ import { UpdateComponent } from './update/update.component';
 import { CreateComponent } from './create/create.component';
 import { DeleteComponent } from './delete/delete.component';
 import { SearchComponent } from './search/search.component';
+import { ReportComponent } from './report/report.component';
 import { DataTablesModule } from 'angular-datatables';
 import { Appservice } from './_services/app.service';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 // rutas
 import {routing} from './app.routing';
+
 
 @NgModule({
   declarations: [
@@ -23,7 +25,8 @@ import {routing} from './app.routing';
     UpdateComponent,
     CreateComponent,
     DeleteComponent,
-    SearchComponent
+    SearchComponent,
+    ReportComponent
   ],
   imports: [
     BrowserModule,

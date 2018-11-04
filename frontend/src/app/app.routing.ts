@@ -4,13 +4,14 @@ import {CreateComponent} from './create/create.component';
 import {SearchComponent} from './search/search.component';
 import {DeleteComponent} from './delete/delete.component';
 import {UpdateComponent} from './update/update.component';
-import { createComponent } from '@angular/compiler/src/core';
+import { ReportComponent } from './report/report.component';
 
 const appRoutes: Routes = [
     { path: '', component: CreateComponent },
     { path: 'search', component: SearchComponent },
     { path: 'update', component: UpdateComponent},
-    { path: 'delete', component: DeleteComponent},
+    { path: 'pagomensual', component: DeleteComponent},
+    { path: 'reporte', component: ReportComponent},
 
     // otherwise redirect to home
     { path: '**', redirectTo: '' }

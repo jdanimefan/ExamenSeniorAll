@@ -18,12 +18,9 @@ export class DeleteComponent implements OnInit {
   })
   registerForm: FormGroup;
   searchForm: FormGroup;
-  submitted = false;
-  roles;
+  submitted = false;  
   fecha;
-  tipos;
-  msgbtnactivo : string = 'Eliminar';
-  msgiconactivo : string = 'delete';
+  numerempleado;
   empleado: {
     cnomempl: string,
     iident: number,
@@ -33,40 +30,44 @@ export class DeleteComponent implements OnInit {
     itipo: number
   };
   numerico = /^[0-9]*$/
-  letras = /^[ña-zÑA-Z\s]+$/;
-  btndeletecolor = 'blue-grey darken-4 waves-effect waves-light btn-large right';
-  msgDelete = {
-    eliminarmsgtitle: "Eliminar",
-    eliminarmsg: '¿Esta seguro de que desea eliminar al empleado?',
+  letras = /^[ña-zÑA-Z\s]+$/;  
+  msgConfirmacion = {
+    confirmmsgtitle: "Pago Mensual",
+    confirmmsg: 'Confirmar Mensaje de pago mensual',
     cancel : {
       msgtitle: 'Cancelado',
       msg: 'Su solicitud fue cancelada'
     },
     accept : {
-      msgtitle: 'Eliminado',
-      msg: 'Su empleado fue dado de baja'
+      msgtitle: 'Pagado',
+      msg: 'Se realizo el pago mensual'
     }
   }
   classcubrioturno = "hide";
   classpagomensual = "hide";
+  classdiascargador = "hide";
+  classdiaschofer = "hide";
+  classvaliddiaschofer = '';
+  classvaliddiascargador = '';
+  fechatext = {
+    monthsShort	:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+    months:	['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+    weekdays: ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'],
+    weekdaysShort: ['Dom','Lun','Mar','Mie','Jue','Vie','Sab'],
+    weekdaysAbbrev:	['D','L','M','M','J','V','S'],
+    cancel	:'Cancelar',
+    clear	:'Limpiar',
+    done	:'Aceptar'
+  };
   options = {
-    i18n: {
-			monthsShort	:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
-			months:	['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
-			weekdays: ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'],
-			weekdaysShort: ['Dom','Lun','Mar','Mie','Jue','Vie','Sab'],
-			weekdaysAbbrev:	['D','L','M','M','J','V','S'],
-			cancel	:'Cancelar',
-			clear	:'Limpiar',
-			done	:'Aceptar'
-		},
+    i18n: this.fechatext,
 		format : "yyyy-mm-dd",
     minDate: new Date(),
     onSelect: (fecha) => {
       let fechacompleta;
 
       if(fecha.getDate() < 10)
-      this.registerForm.value["fecha"] = fecha.getFullYear() + "-" + (fecha.getMonth()+1) +"-0" + fecha.getDate();
+      fechacompleta = fecha.getFullYear() + "-" + (fecha.getMonth()+1) +"-0" + fecha.getDate();
       else
       fechacompleta = fecha.getFullYear() + "-" + (fecha.getMonth()+1) +"-" + fecha.getDate();
 
@@ -75,8 +76,6 @@ export class DeleteComponent implements OnInit {
       this.registerForm.addControl('fecha', new FormControl(fechacompleta, [Validators.required]));
     }
   };
-  
-
 
   account_validation_messages = {
     'numeroempleado': [
@@ -96,7 +95,22 @@ export class DeleteComponent implements OnInit {
       { type: 'required', message: 'El numero de entregas es requerido' },
       { type: 'maxlength', message: 'Maximo 10 digitos' },
       { type: 'pattern', message: 'El numero de entregas solo puede contener numeros' }
-    ]    
+    ],
+    'diasfalto': [
+      { type: 'required', message: 'Los dias que falto es requerido' },
+      { type: 'maxlength', message: 'Maximo 2 digitos' },
+      { type: 'pattern', message: 'Los dias que falto solo puede contener numeros' }
+    ],
+    'diaschofer': [
+      { type: 'required', message: 'Los dias de chofer es requerido' },
+      { type: 'maxlength', message: 'Maximo 2 digitos' },
+      { type: 'pattern', message: 'Los dias de chofer solo puede contener numeros' }
+    ],
+    'diascargador': [
+      { type: 'required', message: 'Los dias de cargador es requerido' },
+      { type: 'maxlength', message: 'Maximo 2 digitos' },
+      { type: 'pattern', message: 'Los dias de cargador solo puede contener numeros' }
+    ]
     }
   constructor(private router: Router,private appService: Appservice,private formBuilder: FormBuilder) { }
 
@@ -123,10 +137,11 @@ export class DeleteComponent implements OnInit {
       numeroentregas: [{value: 0, disabled: false}, [Validators.required, Validators.pattern(this.numerico), Validators.maxLength(10)]],
       checkcubrirturno: [{value: false, disabled: false}, [Validators.required ]],
       checkcubriochofer: [{value: false, disabled: false}, [Validators.required]],
-      diaschofer:[{value: 0, disabled: false}, [Validators.pattern(this.numerico), Validators.maxLength(2)]],
+      diasfalto:[{value: 0, disabled: false}, [Validators.pattern(this.numerico), Validators.maxLength(2)]],
+      diaschofer:[{value: 0, disabled: false}, [Validators.required,Validators.pattern(this.numerico), Validators.maxLength(2)]],
       checkcargador: [{value: false, disabled: false}, [Validators.required]],
-      diascargador: [{value: 0, disabled: false}, [Validators.pattern(this.numerico), Validators.maxLength(2)]],      
-    });    
+      diascargador: [{value: 0, disabled: false}, [Validators.required,Validators.pattern(this.numerico), Validators.maxLength(2)]],      
+    });
     /*if(!this.empleado.istatus)
     {
       this.msgDelete.accept.msgtitle = "Activado";
@@ -142,25 +157,91 @@ export class DeleteComponent implements OnInit {
   
   onSubmit(){
     this.submitted = true;
-    console.log(this.registerForm.value)
-    console.log(this.registerForm.value['checkcubrirturno']);
+    console.log(this.registerForm.value)    
     if(this.registerForm.value['checkcubrirturno'] == true){
-      console.log('entro check');
+      if(this.registerForm.value['checkcubriochofer'] == true && 
+        (this.registerForm.value['diaschofer'] == "" ||
+        this.registerForm.value['diaschofer'] == 0 ) ){
+          this.classvaliddiaschofer = 'invalid';
+          return;
+      }
+      else
+      this.classvaliddiaschofer = '';
+
+      if(this.registerForm.value['checkcargador'] == true && 
+        (this.registerForm.value['diascargador'] == "" ||
+        this.registerForm.value['diascargador'] == 0 ) ){
+          this.classvaliddiascargador = 'invalid';
+          return;
+      }
+      else
+      this.classvaliddiascargador = '';
+
       if (this.registerForm.invalid) {
-        console.log(123)      
           return;
       }
     }
     else{
-      if(!this.registerForm.get('fecha').valid || !this.registerForm.get('numeroentregas').valid || !this.registerForm.get('checkcubrirturno').valid){
+      if(!this.registerForm.get('fecha').valid || 
+      !this.registerForm.get('numeroentregas').valid || 
+      !this.registerForm.get('checkcubrirturno').valid){
         return;
       }
-    }    
-    
-    console.log("paso");    
+    }
+    this.swalWithBootstrapButtons({
+      title: this.msgConfirmacion.confirmmsgtitle,
+      text: this.msgConfirmacion.confirmmsg,
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Si',
+      cancelButtonText: 'No',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.value) {        
+        this.appService.pagoMensual(this.numerempleado, this.registerForm.value['fecha'],
+          this.registerForm.value['checkcubrirturno'], this.registerForm.value['checkcubriochofer'],
+          this.registerForm.value['checkcargador'], this.registerForm.value['diaschofer'],
+          this.registerForm.value['diascargador'], this.registerForm.value['numeroentregas'],
+           this.registerForm.value['diasfalto'])
+          .subscribe(
+            data => {
+              if(data.status == 1)
+              {
+                this.swalWithBootstrapButtons(
+                  this.msgConfirmacion.accept.msgtitle,
+                  data.message,
+                  'success'
+                )
+                this.router.navigate(['/delete']);
+              }
+              else
+              {
+                this.swalWithBootstrapButtons(
+                  "Error",
+                  data.message,
+                  'error'
+                )
+              }
+            },
+            erro => {
+
+            }
+          );     
+      } else if (
+        // Read more about handling dismissals
+        result.dismiss === swal.DismissReason.cancel
+      ) {
+        this.swalWithBootstrapButtons(
+          this.msgConfirmacion.cancel.msgtitle,
+          this.msgConfirmacion.cancel.msg,
+          'error'
+        )
+      }
+    })   
   }
 
-  buscarEmpleado(){    
+  buscarEmpleado(){
+    this.submitted = true;  
     if (this.searchForm.invalid) {
         return;
     }
@@ -168,6 +249,7 @@ export class DeleteComponent implements OnInit {
     .subscribe(
       data => {
         if(data.status == 1){
+          this.numerempleado = data.response[0].inumempl;          
           this.registerForm = this.formBuilder.group({      
             nombre: [{value: data.response[0].cnomempl,disabled: true},[ Validators.required, Validators.pattern(this.letras)]],
             rol: [{value: data.response[0].sdescrol,disabled: true},[ Validators.required, Validators.pattern(this.letras)]],
@@ -176,6 +258,7 @@ export class DeleteComponent implements OnInit {
             numeroentregas: [{value: 0, disabled: false}, [Validators.required, Validators.pattern(this.numerico), Validators.maxLength(10)]],
             checkcubrirturno: [{value: false, disabled: false}, [Validators.required ]],
             checkcubriochofer: [{value: false, disabled: false}, [Validators.required]],
+            diasfalto:[{value: 0, disabled: false}, [Validators.pattern(this.numerico), Validators.maxLength(2)]],
             diaschofer:[{value: 0, disabled: false}, [Validators.pattern(this.numerico), Validators.maxLength(2)]],
             checkcargador: [{value: false, disabled: false}, [Validators.required]],
             diascargador: [{value: 0, disabled: false}, [Validators.pattern(this.numerico), Validators.maxLength(2)]],
@@ -185,6 +268,7 @@ export class DeleteComponent implements OnInit {
             M.updateTextFields();
           },1)
           this.subscribirvalor();
+          this.submitted = false;
         }
         else{
           this.swalWithBootstrapButtons(
@@ -207,10 +291,28 @@ export class DeleteComponent implements OnInit {
 
   subscribirvalor(){
     this.registerForm.get('checkcubrirturno').valueChanges.subscribe(val => {
-      if(this.registerForm.value["checkcubrirturno"] == false)
+      if(val)
         this.classcubrioturno = "";
       else
         this.classcubrioturno = "hide";
     });
+
+    this.registerForm.get('checkcubriochofer').valueChanges.subscribe(val => {
+      if(val)
+        this.classdiaschofer = "";
+      else
+        this.classdiaschofer = "hide";
+    });
+
+    this.registerForm.get('checkcargador').valueChanges.subscribe(val => {      
+      if(val)
+        this.classdiascargador = "";        
+      else
+        this.classdiascargador = "hide";
+    });
+  }
+
+  back(){
+    this.router.navigate(['/create']);
   }
 }

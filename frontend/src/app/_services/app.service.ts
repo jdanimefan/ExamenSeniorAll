@@ -5,6 +5,7 @@ import {tipo} from  '../_models/tipo';
 import {rol} from '../_models/rol';
 import {empleado} from '../_models/empleado';
 import {respuesta} from '../_models/respuesta'
+import {reporte} from '../_models/reporte'
 
 import { Observable } from 'rxjs';
 @Injectable()
@@ -69,9 +70,31 @@ export class Appservice {
         return this.http.post<respuesta>("http://localhost:3000/DeleteEmpleado",{
             numeroempleado: numero,
             activo: activo
-        });        
+        });
     }
 
+    pagoMensual(numero: string, fecha: string,cubrio: string, checkchofer: string,
+        checkcargador: string, diaschofer: string,diascargador: string,entrega: string, diasfalto: string): Observable<any> {                          
+        return this.http.post<respuesta>("http://localhost:3000/PostPagosMensuales",{
+            numeroempleado: numero,
+            fecha: fecha,
+            checkcubrio: cubrio,
+            checkchofer: checkchofer,
+            checkcargador: checkcargador,
+            diaschofer: diaschofer,
+            diascargador: diascargador,
+            diasfalto: diasfalto,
+            numeroentregas: entrega
+        });
+    }
+
+    getReporte(numero, desde, hasta){
+        return this.http.post<reporte>("http://localhost:3000/GetReporte",{
+            numeroempleado: numero,
+            fechadesde: desde,
+            fechahasta: hasta
+        });
+    }
 
     logout() {
         // remove user from local storage to log user out
