@@ -11,7 +11,7 @@
                 <div class="row">
                     <div class="input-field col s12 m6 l6">
                         <i class="material-icons prefix">account_circle</i>
-                        <input  formControlName="numeroempleado" [ngClass]="{ 'invalid': submitted && f.numeroempleado.errors }" id="icon_prefix" type="text" class="validate">
+                        <input  formControlName="numeroempleado" maxlength="10" [ngClass]="{ 'invalid': submitted && f.numeroempleado.errors }" id="icon_prefix" type="text" class="validate">
                         <label for="icon_prefix">Numero</label>
                         <div *ngFor="let validationnumero of account_validation_messages.numeroempleado"  class="messagepading red-text text-darken-2">                          
                           <div *ngIf="registerForm.get('numeroempleado').hasError(validationnumero.type) && (registerForm.get('numeroempleado').dirty || registerForm.get('numeroempleado').touched)">{{validationnumero.message}}</div>

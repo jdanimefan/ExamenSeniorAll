@@ -85,7 +85,7 @@ export class CreateComponent implements OnInit {
   get f() { return this.registerForm.controls; }
 
   onSubmit() {
-      this.submitted = true;
+      this.submitted = true;      
       if (this.registerForm.invalid) {
           return;
       }      
@@ -101,7 +101,6 @@ export class CreateComponent implements OnInit {
           console.error(error);
         }
       );
-
   }
 
 }

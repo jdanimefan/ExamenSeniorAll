@@ -78,8 +78,7 @@ export class UpdateComponent implements OnInit {
     this.cargarempleado();
     setTimeout(() => {
       M.updateTextFields();
-    },1)
-    
+    },1)    
   }
 
   desactivar(){    

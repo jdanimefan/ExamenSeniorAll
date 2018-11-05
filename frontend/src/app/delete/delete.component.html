@@ -11,7 +11,7 @@
                   <div class="row">
                       <div class="input-field col s12 m6 l6">
                           <i class="material-icons prefix">account_circle</i>
-                          <input  formControlName="numeroempleado" [ngClass]="{ 'invalid': submitted && s.numeroempleado.errors }" id="numero" type="text" class="validate">
+                          <input  maxlength="10" formControlName="numeroempleado" [ngClass]="{ 'invalid': submitted && s.numeroempleado.errors }" id="numero" type="text" class="validate">
                           <label for="numero">Numero</label>
                           <div *ngFor="let validationnumero of account_validation_messages.numeroempleado"  class="messagepading red-text text-darken-2">                          
                             <div *ngIf="searchForm.get('numeroempleado').hasError(validationnumero.type) && (searchForm.get('numeroempleado').dirty || searchForm.get('numeroempleado').touched)">{{validationnumero.message}}</div>
@@ -64,7 +64,7 @@
                   <div class="row">
                       <div class="input-field col s12 m6 l6">
                           <i class="material-icons prefix">account_circle</i>
-                          <input formControlName="numeroentregas" [ngClass]="{ 'invalid': submitted && f.numeroentregas.errors }" id="entregas" type="text" class="">
+                          <input maxlength="10" formControlName="numeroentregas" [ngClass]="{ 'invalid': submitted && f.numeroentregas.errors }" id="entregas" type="text" class="">
                           <label  for="entregas">Numero de Entregas</label>
                           <div *ngFor="let validationentrega of account_validation_messages.numeroentregas"  class="messagepading red-text text-darken-2">                          
                             <div *ngIf="registerForm.get('numeroentregas').hasError(validationentrega.type) && (registerForm.get('numeroentregas').dirty || registerForm.get('numeroentregas').touched )">{{validationentrega.message}}</div>
@@ -77,12 +77,12 @@
                                   <span>Cubrio turno?</span>
                                 </label>
                               </p>
-                        </div>                        
+                        </div>
                   </div>
                   <div class="row">
                     <div class="input-field col s12 m6 l6">
                       <i class="material-icons prefix">account_circle</i>
-                      <input formControlName="diasfalto" [ngClass]="classvaliddiaschofer" id="diasfalto" type="text">
+                      <input maxlength="2" formControlName="diasfalto" [ngClass]="classvaliddiaschofer" id="diasfalto" type="text">
                       <label for="diasfalto">Dias que falto</label>
                       <div *ngFor="let validationdiasfalto of account_validation_messages.diasfalto"  class="messagepading red-text text-darken-2">                          
                         <div *ngIf="registerForm.get('diasfalto').hasError(validationdiasfalto.type) && (registerForm.get('diasfalto').dirty || registerForm.get('diasfalto').touched )">{{validationdiasfalto.message}}</div>
@@ -106,7 +106,7 @@
                                       </div>                                        
                                       <div [ngClass]="classdiaschofer" class="input-field col s12 m6 l6">
                                           <i class="material-icons prefix">account_circle</i>
-                                          <input formControlName="diaschofer" [ngClass]="classvaliddiaschofer" id="diaschofer" type="text">
+                                          <input maxlength="2" formControlName="diaschofer" [ngClass]="classvaliddiaschofer" id="diaschofer" type="text">
                                           <label for="diaschofer">Dias Cubiertos como "Chofer"</label>
                                           <div *ngFor="let validationdiaschofer of account_validation_messages.diaschofer"  class="messagepading red-text text-darken-2">                          
                                             <div *ngIf="registerForm.get('diaschofer').hasError(validationdiaschofer.type) && (registerForm.get('diaschofer').dirty || registerForm.get('diaschofer').touched )">{{validationdiaschofer.message}}</div>
@@ -124,7 +124,7 @@
                                       </div>                                        
                                       <div [ngClass]="classdiascargador" class="input-field col s12 m6 l6">
                                           <i class="material-icons prefix">account_circle</i>
-                                          <input formControlName="diascargador" [ngClass]="classvaliddiascargador" id="diascargador" type="text">
+                                          <input maxlength="2" formControlName="diascargador" [ngClass]="classvaliddiascargador" id="diascargador" type="text">
                                           <label for="diascargador">Dias Cubiertos como "Cargador"</label>
                                           <div *ngFor="let validationdiascargador of account_validation_messages.diascargador"  class="messagepading red-text text-darken-2">                          
                                             <div *ngIf="registerForm.get('diascargador').hasError(validationdiascargador.type) && (registerForm.get('diascargador').dirty || registerForm.get('diascargador').touched )">{{validationdiascargador.message}}</div>
