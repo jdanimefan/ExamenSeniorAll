@@ -1,7 +1,3 @@
--- Function: obtenermonto(integer, smallint, smallint, smallint, smallint, smallint, smallint, date)
-
--- DROP FUNCTION obtenermonto(integer, smallint, smallint, smallint, smallint, smallint, smallint, date);
-
 CREATE OR REPLACE FUNCTION obtenermonto(IN integer, IN smallint, IN smallint, IN smallint, IN smallint, IN smallint, IN smallint, IN date, OUT fpagototal double precision, OUT fmontodespensa double precision, OUT fisrret double precision, OUT fisrretadc double precision)
   RETURNS record AS
 $BODY$
@@ -19,20 +15,21 @@ DECLARE
 	iIdrol				INT4 DEFAULT 0;
 	iIdtipo				INT4 DEFAULT 0;
 	iDiasTrabajo			INT4 DEFAULT 0;
-    iSalarioXhora				INT4 DEFAULT 0;
+	iHorasTrabajadas		INT4 DEFAULT 0;
+	iSalarioXhora			INT4 DEFAULT 0;
 	lSueldobase			INT4 DEFAULT 0;
 	lBonoentrega			INT4 DEFAULT 0;
 	lBonorol			INT4 DEFAULT 0;
 	lTotalBono			INT4 DEFAULT 0;
 	lBonoaux			INT4 DEFAULT 0;
 	lTotalBonoAux			INT4 DEFAULT 0;
-	lIsr			INT4 DEFAULT 0;
+	lIsr				INT4 DEFAULT 0;
 	lSueldoMensual			INT4 DEFAULT 0;
 	--lPagoTotal			INT4 DEFAULT 0;
 	lPorcentajedesp			FLOAT DEFAULT 0;
-	--lMontodespensa			INT4 DEFAULT 0;
-	lImportesEntrega			INT4 DEFAULT 0;
-	fPagoTotalAdi			FLOAT DEFAULT 0;
+	--lMontodespensa		INT4 DEFAULT 0;
+	lImportesEntrega		INT4 DEFAULT 0;
+	bvariable bool DEFAULT false;
 	
 BEGIN
 
@@ -50,6 +47,7 @@ BEGIN
 
     -- Obtengo el sueldo base ganado real al mes
 	lSueldobase = ( iSalarioXhora * 8 ) * iDiasTrabajo;
+	iHorasTrabajadas = 8 * iDiasTrabajo;
     raise notice 'sueldo base; %',lSueldobase;
 
 raise notice 'salario x hora %',iSalarioXhora;
@@ -87,30 +85,32 @@ raise notice 'bonos por rol: %',lTotalBono;
 		END IF;
 	END IF;
 
-    --Se obtiene el ISR base retenido
-	SELECT 100 - valor INTO lIsr from isr where isr = 1;
-    
-    -- Se obtiene el sueldo mensual base sumando los bonos
+	-- Se obtiene el sueldo mensual base sumando los bonos
 	lSueldoMensual = lSueldobase + lImportesEntrega + lTotalBono + lTotalBonoAux;
-    raise notice 'entregas bono: %', lImportesEntrega;
-    -- Se obtiene el pago mensual con el ISR aplicado
-	fPagoTotal = lSueldoMensual::float * ( lIsr::float / 100::float );
-    -- Se obtiene el ISR que se le retubo al empleado
-	fIsrret = lSueldoMensual::float - fPagoTotal;
-	
-raise notice 'Sueldo Con Isr %  Sueldo Sin Isr %',fPagoTotal,lSueldoMensual;
-raise notice 'ISR retenido %',fIsrret;
-    -- Si el sueldo mensual es mayor a 16000 se le aplicara adicionalmente un cargo adicional
-	IF lSueldoMensual > 16000 THEN
-        -- Se obtiene la cantidad adicional que se retendra
-		SELECT 100 - valor INTO lIsr from isr where isr = 2;
 
-        -- Se calcula el isr Adicional que s ele retendra al empleado
-		fPagoTotalAdi = (fPagoTotal * ( lIsr::float / 100::float ));		
-		fIsrretAdc = fPagoTotal - fPagoTotalAdi;
-        fPagoTotal = fPagoTotalAdi;
-        raise notice'Sueldo Con Isr Adicional %  Sueldo Sin Adicional Isr%',fPagoTotal,fIsrretAdc;
-        raise notice 'ISR retenido Adicional %',fIsrretAdc;
+	-- Si el sueldo mensual es mayor a 16000 se le aplicara adicionalmente un cargo adicional
+	IF lSueldoMensual > 16000 THEN
+		--Se obtiene el ISR base adicional retenido
+		SELECT 100 - valor INTO lIsr from isr where isr = 2;
+	    	    
+	    raise notice 'entregas bono: %', lImportesEntrega;
+	    -- Se obtiene el pago mensual con el ISR aplicado
+		fPagoTotal = lSueldoMensual::float * ( lIsr::float / 100::float );
+	    -- Se obtiene el ISR que se le retubo al empleado
+		fIsrret = lSueldoMensual::float - fPagoTotal;
+		raise notice 'Sueldo Con Isr %  Sueldo Sin Isr %',fPagoTotal,lSueldoMensual;
+		raise notice 'ISR retenido %',fIsrret;
+        ELSE
+            --Se obtiene el ISR base retenido
+		SELECT 100 - valor INTO lIsr from isr where isr = 1;
+	    	    
+	    raise notice 'entregas bono: %', lImportesEntrega;
+	    -- Se obtiene el pago mensual con el ISR aplicado
+		fPagoTotal = lSueldoMensual::float * ( lIsr::float / 100::float );
+	    -- Se obtiene el ISR que se le retubo al empleado
+		fIsrret = lSueldoMensual::float - fPagoTotal;
+		raise notice 'Sueldo Con Isr %  Sueldo Sin Isr %',fPagoTotal,lSueldoMensual;
+		raise notice 'ISR retenido %',fIsrret;
 	END IF;
 	
     -- Si el empleado es Interno recibira un bono de despensa
@@ -121,6 +121,18 @@ raise notice 'ISR retenido %',fIsrret;
 		fMontodespensa =  (lSueldoMensual * lPorcentajedesp / 100)::float;
         raise notice 'bono x despensa %',fMontodespensa;
 	END IF;
+
+	-- Se guarda la informacion en la tabla
+	
+	raise notice 'smallint bool %',bvariable ;
+	INSERT INTO pagos(numeroempleado, auxiliarchofer, diaschofer, auxiliarcargador,
+            diascargador, monto, isrretenido, bonoenvales, horastrabajadas, 
+            entregas, diasfalto, fecha)
+
+	    VALUES (lEmpleado, (iAuxiliarchofer::integer)::bool, iDiaschofer, (iAuxiliarCargador::integer)::bool,
+		    iDiascargador, fPagoTotal, fIsrret, fMontodespensa, iHorasTrabajadas, 
+		    iEntregas, iDiasfalto, tFecha);
+
 
 END;
 $BODY$
