@@ -1,3 +1,11 @@
 .messagepading {
     padding-left: 3rem;
 }
+
+.divprinci{    
+    background: #ffffff;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+}

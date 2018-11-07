@@ -43,3 +43,29 @@
       </div>
 </form>
 </div>
+<div [ngClass]="divrepo" class="divprinci row">
+  <div class="col s12 m12 l12">
+    <table id="datatable" class="row-border hover">
+        <thead>
+          <tr>        
+            <th>Numero</th>
+            <th>Nombre</th>
+            <th>Monto</th>
+            <th>ISR</th>
+            <th>Horas T</th>
+            <th>Entregas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let pago of pagos">        
+            <td> {{pago.inumempl}} </td>
+            <td> {{pago.tnomempl}} </td>
+            <td> {{pago.imonto}} </td>
+            <td> {{pago.iisrretenido}} </td>
+            <td> {{pago.ihorastrabajadas}} </td>
+            <td> {{pago.ientregas}} </td>            
+          </tr>     
+        </tbody>
+      </table>
+</div>
+</div>

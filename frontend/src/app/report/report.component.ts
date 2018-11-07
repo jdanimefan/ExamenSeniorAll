@@ -5,21 +5,34 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { Router } from '@angular/router';
 import * as M from '../../assets/materialize/js/materialize.min.js';
 declare var $:any;
+
+// Componente que genera el reporte de pagos por empleado
 @Component({
   selector: 'app-report',
   templateUrl: './report.component.html',
   styleUrls: ['./report.component.css']
 })
 export class ReportComponent implements OnInit {
+  // Reactive form
   searchForm: FormGroup;
   submitted = false; 
+
+  // Estilo par alos botones de sweet alert
   swalWithBootstrapButtons = swal.mixin({
     confirmButtonClass: 'btn green lighten-2 waves-effect waves-light',
     cancelButtonClass: 'btn red lighten-2 waves-effect waves-light',
     buttonsStyling: false,
   });
+  // Variable que almacena los registros de la busqueda
+  pagos;
 
+  // Regex
   numerico = /^[0-9]*$/
+  
+  //ngclass para ocultar el dise;o del rpeorte mientras se carga
+  divrepo = 'hide';
+
+  // Objeto con los mensajes a mostrar para el reactive form
   account_validation_messages = {
     'numeroempleado': [
       { type: 'required', message: 'el numero de empleado es requerido' },      
@@ -34,6 +47,7 @@ export class ReportComponent implements OnInit {
     ]
   }
 
+  // Texto para el picker
   fechatext = {
     monthsShort	:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
     months:	['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
@@ -44,13 +58,14 @@ export class ReportComponent implements OnInit {
     clear	:'Limpiar',
     done	:'Aceptar'
   };
+
+  // configuracion para los pickers y evento onselect para guardar el valor del picker en el reactive form
   options = {
     i18n: this.fechatext,
 		format : "yyyy-mm-dd",
     minDate: new Date(),
     onSelect: (fecha) => {
-      let fechacompleta;
-      console.log('fecha1');
+      let fechacompleta;      
       if(fecha.getDate() < 10)
       fechacompleta = fecha.getFullYear() + "-" + (fecha.getMonth()+1) +"-0" + fecha.getDate();
       else
@@ -68,7 +83,6 @@ export class ReportComponent implements OnInit {
     minDate: new Date(),
     onSelect: (fecha) => {
       let fechacompleta;
-      console.log('fecha2');
       if(fecha.getDate() < 10)
       fechacompleta = fecha.getFullYear() + "-" + (fecha.getMonth()+1) +"-0" + fecha.getDate();
       else
@@ -79,11 +93,13 @@ export class ReportComponent implements OnInit {
       this.searchForm.addControl('fechahasta', new FormControl(fechacompleta, [Validators.required]));
     }
   };
+
   constructor(private router: Router,private appService: Appservice,private formBuilder: FormBuilder) { }
 
+  // Se inicializa el reactive y los pickers de las fechas
   ngOnInit() {
     this.searchForm = this.formBuilder.group({
-      numeroempleado: [{value: '', disabled: false}, [Validators.required, Validators.pattern(this.numerico), Validators.maxLength(10)]],
+      numeroempleado: [{value: 0, disabled: false}, [Validators.required, Validators.pattern(this.numerico), Validators.maxLength(10)]],
       fechadesde: ['',[ Validators.required]],
       fechahasta: ['',[ Validators.required]],
     });
@@ -93,24 +109,33 @@ export class ReportComponent implements OnInit {
   
   get s() { return this.searchForm.controls; }
 
-  buscarReporte(){
-    this.submitted = true;
-    console.log(this.searchForm.value);
+  // Se busca el reporte por medio de los filtros
+  buscarReporte(){    
+    this.submitted = true;    
     if (this.searchForm.invalid) {
         return;
     }
+    // Se consume el provider para mandar la peticion al back end 
     this.appService.getReporte(this.searchForm.value["numeroempleado"],
     this.searchForm.value["fechadesde"],
     this.searchForm.value["fechahasta"])
     .subscribe(
-      data => {
-        console.log(data);
+      data => {        
         if(data.status == 1){
-          console.log(data);
+          this.pagos = data.response;
+          // Si todo va bien se llena la tabla con la informacion
+          $.getScript('//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js',function(){
+              $('#datatable').DataTable({
+                "lengthChange": false,
+                "language": {"url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"}
+             });
+           });
+          this.divrepo = '';
+          this.submitted = false;
           setTimeout(() => {
             M.updateTextFields();
           },1)
-          this.submitted = false;
+          
         }
         else{
           this.swalWithBootstrapButtons(

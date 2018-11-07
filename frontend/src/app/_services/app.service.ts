@@ -1,44 +1,40 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import {HttpClient} from '@angular/common/http';
 import {tipo} from  '../_models/tipo';
 import {rol} from '../_models/rol';
 import {empleado} from '../_models/empleado';
 import {respuesta} from '../_models/respuesta'
 import {reporte} from '../_models/reporte'
-
 import { Observable } from 'rxjs';
+
+//Provider que consumira el servicio generado en node Js
 @Injectable()
 export class Appservice {
     constructor(private http: HttpClient) { }   
     
-    
-    verificarHuella(username: string, template: string): Observable<any> {
-        var myFormData = new FormData();
-        myFormData.append('template', template);
-        myFormData.append('numemp', username);
-        return this.http.post<string>("http://10.44.65.16/clicktocall/php/validahuella_wg.php",myFormData);        
-        //localStorage.setItem('currentemploye', JSON.stringify(user));       
-    }
-
+    // Obtengo los tipos de empleado por medio del servicio
     getTipo(){
         return this.http.get<tipo>("http://localhost:3000/GetTipos");
     }
 
+    // Obtengo los roles del empleado por medio del servicio
     getRol(){
         return this.http.get<rol>("http://localhost:3000/GetRoles");
     }
 
+    // Obtengo los empleados por medio del servicio
     getEmpleados(){
         return this.http.get<empleado>("http://localhost:3000/GetEmpleados");
     }
 
+    // Obtengo un empleado en especifico a travez de su numero de empleado
     getEmpleado(numero){
         return this.http.post<empleado>("http://localhost:3000/GetEmpleado",{
             numeroempleado: numero
         });
     }
     
+    //  Guardo el empleado por medio del servicio
     guardarEmpleado(numero: string, nombre: string, rol: string, tipo: string): Observable<any> {  
 
         return this.http.post<respuesta>("http://localhost:3000/PostEmpleado",{
@@ -49,6 +45,7 @@ export class Appservice {
         });        
     }
 
+    // Modifico al empleado a travez de su numero de empleado
     modificarEmpleado(numero: string, nombre: string, rol: string, tipo: string): Observable<any> {  
 
         return this.http.put<respuesta>("http://localhost:3000/PutEmpleado",{
@@ -59,6 +56,7 @@ export class Appservice {
         });        
     }
 
+    //Se da de baja o se activa a un empleado por medio del servicio
     eliminarEmpleado(numero: string, activo: string): Observable<any> {  
         console.log(activo)
         if(activo === "true")        
@@ -73,6 +71,7 @@ export class Appservice {
         });
     }
 
+    // Se realiza al servicio generar los calculos y guardar un registro del movimiento en la BD
     pagoMensual(numero: string, fecha: string,cubrio: string, checkchofer: string,
         checkcargador: string, diaschofer: string,diascargador: string,entrega: string, diasfalto: string): Observable<any> {                          
         return this.http.post<respuesta>("http://localhost:3000/PostPagosMensuales",{
@@ -88,16 +87,13 @@ export class Appservice {
         });
     }
 
+    // Se obtiene un reporte simple d elos movimientos generados en el mes de todos los empleados 
+    // o de uno en especifico
     getReporte(numero, desde, hasta){
         return this.http.post<reporte>("http://localhost:3000/GetReporte",{
             numeroempleado: numero,
             fechadesde: desde,
             fechahasta: hasta
         });
-    }
-
-    logout() {
-        // remove user from local storage to log user out
-        localStorage.removeItem('currentUser');
     }
 }
