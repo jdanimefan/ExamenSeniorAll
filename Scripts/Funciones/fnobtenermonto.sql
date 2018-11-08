@@ -78,7 +78,7 @@ raise notice 'bonos por rol: %',lTotalBono;
 
         --Si apoyo como cargador el auxiliar recibira el bono x hora que obtiene un chofer
 		IF iAuxiliarCargador = 1 THEN
-			SELECT bono INTO lBonoaux FROM bonos WHERE idrol = 1;
+			SELECT bono INTO lBonoaux FROM bonos WHERE idrol = 2;
 			lTotalBonoAux = lTotalBonoAux + ( iDiascargador * 8 ) * lBonoaux;
             raise notice 'bono por cargador %',( iDiascargador * 8 ) * lBonoaux;
             raise notice 'bono por auxiliar total %',lTotalBonoAux;

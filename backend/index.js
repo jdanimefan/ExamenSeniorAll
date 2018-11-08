@@ -22,7 +22,8 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 // cabeceros para aceptar origen de acceso
 app.use(function (req, res, next) {
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    //res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
 
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -410,7 +411,7 @@ app.get('/GetRoles', function(req, res) {
  });
 
  // get de los tipos de empleados que existen
-app.get('/GetTipos', function(req, res) {
+app.get('/GetTipos', function(req, res) {    
     var resp = {
         status: 0,
         message: "",
@@ -470,9 +471,9 @@ app.post('/PostPagosMensuales', function (req, res) {
         resp.message = "El numero de empleado no es valido";
         res.json(resp);
     }
-    else if(Date.parse(fecha) === NaN){
+    else if(isNaN(Date.parse(fecha))){
         resp.status = -1;
-        resp.message = "El fecha no es valida";
+        resp.message = "La fecha no es valida";
         res.json(resp);
     }
     else if(!validator.isBoolean(cubrio.toString())){
@@ -556,19 +557,20 @@ app.post('/PostPagosMensuales', function (req, res) {
         message: "",
         response: ""
     };
-    if(!validator.isInt(numEmpl)){
+
+    if(!validator.isInt(numEmpl.toString())){
         resp.status = -1;
         resp.message = "El numero de empleado no es valido";
         res.json(resp);
     }
-    else if(Date.parse(fdesde) === NaN){
+    else if(isNaN(Date.parse(fdesde))){        
         resp.status = -1;
-        resp.message = "El fecha desde no es valida";
+        resp.message = "La fecha desde no es valida";
         res.json(resp);
     }
-    else if(Date.parse(fhasta) === NaN){
+    else if(isNaN(Date.parse(fhasta))){
         resp.status = -1;
-        resp.message = "El fecha hasta no es valida";
+        resp.message = "La fecha hasta no es valida";
         res.json(resp);
     }
     else{
@@ -592,14 +594,14 @@ app.post('/PostPagosMensuales', function (req, res) {
                 })
                 .catch(err => {
                     resp.status = -2;
-                    resp.message = "Ocurrio un error alasd consultar el reporte";
+                    resp.message = "Ocurrio un error al consultar el reporte";
                     client.end();                    
                     res.status(200).json(resp);
                 }); 
           }
           catch(error) {
             resp.status = -2;
-            resp.message = "Ocurrio un error  al consultar el reporte";
+            resp.message = "Ocurrio un error al consultar el reporte";
             res.status(200).json(resp);
           }       
     }

@@ -7,11 +7,12 @@ import * as $ from 'jquery';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent  implements OnInit {
-  title = 'examenFronEnd';
+  title = 'Riku Nomina';
   options = {
 
   };
   
+  // Se inicializa materialize
   ngOnInit() {
     let elems = document.querySelectorAll('.carousel');
     let instances = M.Carousel.init(elems, this.options);

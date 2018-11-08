@@ -62,8 +62,7 @@ export class ReportComponent implements OnInit {
   // configuracion para los pickers y evento onselect para guardar el valor del picker en el reactive form
   options = {
     i18n: this.fechatext,
-		format : "yyyy-mm-dd",
-    minDate: new Date(),
+		format : "yyyy-mm-dd",    
     onSelect: (fecha) => {
       let fechacompleta;      
       if(fecha.getDate() < 10)
@@ -79,8 +78,7 @@ export class ReportComponent implements OnInit {
 
   options1 = {
     i18n: this.fechatext,
-		format : "yyyy-mm-dd",
-    minDate: new Date(),
+		format : "yyyy-mm-dd",    
     onSelect: (fecha) => {
       let fechacompleta;
       if(fecha.getDate() < 10)
@@ -105,12 +103,17 @@ export class ReportComponent implements OnInit {
     });
     $('#fechadesde').datepicker(this.options);
     $('#fechahasta').datepicker(this.options1);
+    setTimeout(() => {
+      M.updateTextFields();      
+    },1)
   }
   
   get s() { return this.searchForm.controls; }
 
   // Se busca el reporte por medio de los filtros
-  buscarReporte(){    
+  buscarReporte(){
+    this.divrepo = 'hide';
+    $('#datatable').DataTable().destroy();
     this.submitted = true;    
     if (this.searchForm.invalid) {
         return;
@@ -129,12 +132,12 @@ export class ReportComponent implements OnInit {
                 "lengthChange": false,
                 "language": {"url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"}
              });
-           });
-          this.divrepo = '';
+           });          
           this.submitted = false;
           setTimeout(() => {
             M.updateTextFields();
-          },1)
+            this.divrepo = '';
+          },200)
           
         }
         else{
@@ -150,7 +153,7 @@ export class ReportComponent implements OnInit {
           "Error",
           error,
           'error'
-        )
+        );
       }
     )
   }

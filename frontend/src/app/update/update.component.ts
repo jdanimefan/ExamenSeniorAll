@@ -10,18 +10,24 @@ import * as M from '../../assets/materialize/js/materialize.min.js';
   templateUrl: './update.component.html',
   styleUrls: ['./update.component.css']
 })
+
+// Componente que modifica y elimina/desactiva un empleado
 export class UpdateComponent implements OnInit {
+
+  // Css para los botones de sweet alert2
   swalWithBootstrapButtons = swal.mixin({
     confirmButtonClass: 'btn green lighten-2 waves-effect waves-light',
     cancelButtonClass: 'btn red lighten-2 waves-effect waves-light',
     buttonsStyling: false,
   })
+
+  // reactive forms
   registerForm: FormGroup;
   submitted = false;
+
+  //Declaracion d evariables
   roles;
   tipos;
-  msgbtnactivo : string = 'Eliminar';
-  msgiconactivo : string = 'delete';
   empleado: {
     cnomempl: string,
     iident: number,
@@ -30,8 +36,15 @@ export class UpdateComponent implements OnInit {
     istatus: number,
     itipo: number
   };
+
+  // Regex
   numerico = /^[0-9]*$/
   letras = /^[ña-zÑA-Z\s]+$/;
+
+  // Mensajes y estilos para la alertas y botones
+  msgbtnactivo : string = 'Eliminar';
+  msgiconactivo : string = 'delete';
+   
   btndeletecolor = 'blue-grey darken-4 waves-effect waves-light btn-large right';
   msgDelete = {
     eliminarmsgtitle: "Eliminar",
@@ -47,7 +60,7 @@ export class UpdateComponent implements OnInit {
   }
   
 
-
+// Objeto con los mensajes cuando se validne los reactive forms
   account_validation_messages = {
     'numeroempleado': [
       { type: 'required', message: 'el numero de empleado es requerido' },      
@@ -69,6 +82,8 @@ export class UpdateComponent implements OnInit {
 
   constructor(private router: Router,private appService: Appservice,private formBuilder: FormBuilder) { }
 
+  //Valida que traiga un empleado seleccionado, carga la info de los tipos de empleado,
+  // roles y carga al empleado
   ngOnInit() {
     if(!localStorage.getItem('numeroempleado'))
     {
@@ -81,6 +96,7 @@ export class UpdateComponent implements OnInit {
     },1)    
   }
 
+  //Desactiva o activa a un empleado
   desactivar(){    
     this.swalWithBootstrapButtons({
       title: this.msgDelete.eliminarmsgtitle,
@@ -92,6 +108,7 @@ export class UpdateComponent implements OnInit {
       reverseButtons: true
     }).then((result) => {
       if (result.value) {
+        // Si se confirmo la activacion o eliminacion se consume el servicio del provider
         let empleado = this.registerForm.getRawValue();        
         this.appService.eliminarEmpleado(empleado.numeroempleado, this.empleado.istatus.toString())
         .subscribe(
@@ -122,10 +139,9 @@ export class UpdateComponent implements OnInit {
             )
           }
         );       
-      } else if (
-        // Read more about handling dismissals
+      } else if (        
         result.dismiss === swal.DismissReason.cancel
-      ) {
+      ) {        
         this.swalWithBootstrapButtons(
           this.msgDelete.cancel.msgtitle,
           this.msgDelete.cancel.msg,
@@ -135,6 +151,7 @@ export class UpdateComponent implements OnInit {
     })
   }
 
+  // Carga la info del empleado
   cargarempleado()
   {
     this.empleado = JSON.parse(localStorage.getItem("numeroempleado"));    
@@ -145,6 +162,7 @@ export class UpdateComponent implements OnInit {
       radiotipos: [this.empleado.itipo,[ Validators.required]]
     });
 
+    // Si el estadus del empleado esta desactivado cmabia el texto del boton a activar
     if(!this.empleado.istatus)
     {
       this.msgDelete.accept.msgtitle = "Activado";
@@ -179,6 +197,7 @@ export class UpdateComponent implements OnInit {
             'error'
           )
       });
+
     // cargando los roles del empleado
     this.appService.getRol()
       .subscribe(
@@ -202,15 +221,19 @@ export class UpdateComponent implements OnInit {
         }
       );
   }
+
   get f() { return this.registerForm.controls; }
+  // Se valida la informacion con reactive forms y se manda modificar el empleado 
   onSubmit() {
     this.submitted = true;
     if (this.registerForm.invalid) {
         return;
     }
 
+    // Si la informacion paso la validacion se manda a consumir el provider para actualizar al empleado
     let empleado = this.registerForm.getRawValue();    
-    this.appService.modificarEmpleado(empleado.numeroempleado,empleado.nombre,empleado.radioroles,empleado.radiotipos)
+    this.appService.modificarEmpleado(empleado.numeroempleado,empleado.nombre,empleado.radioroles,
+      empleado.radiotipos)
     .subscribe(
       data => {
         if(data.status == 1){
@@ -239,6 +262,7 @@ export class UpdateComponent implements OnInit {
     );
 }
 
+// Si da regresar volvera al componente de buscar
 back(){    
   this.router.navigate(['/search']);
 }

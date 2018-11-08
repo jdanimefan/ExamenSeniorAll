@@ -18,7 +18,7 @@
                           </div>
                       </div>
                       <div class="col s12 m6 l6">
-                        <button class="green lighten-2 waves-effect waves-light btn-large right" [disabled]="loading"><i class="material-icons left">search</i>Buscar</button>
+                        <button class="green lighten-2 waves-effect waves-light btn-large right"><i class="material-icons left">search</i>Buscar</button>
                       </div>
                   </div>
                 </div>
@@ -82,7 +82,7 @@
                   <div class="row">
                     <div class="input-field col s12 m6 l6">
                       <i class="material-icons prefix">account_circle</i>
-                      <input maxlength="2" formControlName="diasfalto" [ngClass]="classvaliddiaschofer" id="diasfalto" type="text">
+                      <input maxlength="2" formControlName="diasfalto"  [ngClass]="{ 'invalid': submitted && f.diasfalto.errors }" id="diasfalto" type="text">
                       <label for="diasfalto">Dias que falto</label>
                       <div *ngFor="let validationdiasfalto of account_validation_messages.diasfalto"  class="messagepading red-text text-darken-2">                          
                         <div *ngIf="registerForm.get('diasfalto').hasError(validationdiasfalto.type) && (registerForm.get('diasfalto').dirty || registerForm.get('diasfalto').touched )">{{validationdiasfalto.message}}</div>
@@ -101,8 +101,7 @@
                                                 <input formControlName="checkcubriochofer" type="checkbox" />
                                                 <span>Cubrio Chofer?</span>
                                               </label>
-                                            </p>
-                                            {{this.numerempleado}}
+                                            </p>                                            
                                       </div>                                        
                                       <div [ngClass]="classdiaschofer" class="input-field col s12 m6 l6">
                                           <i class="material-icons prefix">account_circle</i>
@@ -143,7 +142,7 @@
     </div>        
     <div class="row">
       <div class="col s12">        
-        <button class="green lighten-2 waves-effect waves-light btn-large right" [disabled]="loading"><i class="material-icons left">save</i>Pagar</button>
+        <button class="green lighten-2 waves-effect waves-light btn-large right" ><i class="material-icons left">save</i>Pagar</button>
         <a (click)="back()" class="red lighten-2 waves-effect waves-light btn-large right"><i class="material-icons left">replay</i>Regresar</a>
       </div>      
     </div>
