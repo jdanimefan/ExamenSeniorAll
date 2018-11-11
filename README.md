@@ -134,7 +134,7 @@ Es necesaria una opción donde se mostrara los movimientos que se generaron del 
 	* PostgreSQL   Version 9.3.24 , compiled by Visual C++ build 1600, 64-bit"
 	* nodemon      Version 1.18.5
 	* pm2          Version 3.2.2
-	* @angular/cli Latest Version
+	* @angular/cli Version 7.0.3
 	
 * Para probarlo despues de buildear el proyecto de angular se utilizo 
 	* Stack wampserver 3.0.6 64 bit.
