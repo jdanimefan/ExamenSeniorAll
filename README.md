@@ -128,12 +128,13 @@ Es necesaria una opción donde se mostrara los movimientos que se generaron del 
 
 ## Arquitectura
 * Frameworks y base de datos utilizados para generar el proyecto
-	* npm         Version 6.4.1
-	* node js     Version 10.11.0
-	* pgAdmin     Version 1.18.1
-	* PostgreSQL  Version 9.3.24 , compiled by Visual C++ build 1600, 64-bit"
-	* nodemon     Version 1.18.5
-	* pm2         Version 3.2.2
+	* npm          Version 6.4.1
+	* node js      Version 10.11.0
+	* pgAdmin      Version 1.18.1
+	* PostgreSQL   Version 9.3.24 , compiled by Visual C++ build 1600, 64-bit"
+	* nodemon      Version 1.18.5
+	* pm2          Version 3.2.2
+	* @angular/cli Latest Version
 	
 * Para probarlo despues de buildear el proyecto de angular se utilizo 
 	* Stack wampserver 3.0.6 64 bit.
